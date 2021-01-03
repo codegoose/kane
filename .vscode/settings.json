@@ -1,0 +1,7 @@
+{
+	"C_Cpp.autoAddFileAssociations": false,
+	"C_Cpp.default.cppStandard": "c++20",
+	"editor.insertSpaces": false,
+	"C_Cpp.vcpkg.enabled": false,
+	"editor.detectIndentation": false
+}
