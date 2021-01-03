@@ -1,0 +1,1 @@
+pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-enet mingw-w64-x86_64-physfs mingw-w64-x86_64-glfw mingw-w64-x86_64-glew mingw-w64-x86_64-gdb mingw-w64-x86_64-spdlog mingw-w64-x86_64-fmt mingw-w64-x86_64-cmake mingw-w64-x86_64-ninja mingw-w64-x86_64-freetype mingw-w64-x86_64-sfml
