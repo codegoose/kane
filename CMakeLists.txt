@@ -9,6 +9,7 @@ add_executable(
 	settings.cpp
 	assets.cpp
 	timing.cpp
+	entity_merchant.cpp
 )
 
 add_library(

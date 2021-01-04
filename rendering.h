@@ -37,6 +37,6 @@ namespace kane::rendering {
 	};
 
 	bool initialize(NVGcontext *nvg);
-	void render(NVGcontext *nvg);
+	void render(NVGcontext *nvg, glm::ivec2 framebuffer_size);
 	void shutdown(NVGcontext *nvg);
 }

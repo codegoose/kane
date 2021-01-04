@@ -37,9 +37,7 @@ namespace kane {
 				glfwGetFramebufferSize(window, &w, &h);
 				glViewport(0, 0, w, h);
 				nvgBeginFrame(nvg, w, h, 1);
-				nvgTranslate(nvg, w / 2, h / 2);
-				nvgScale(nvg, 4, 4);
-				rendering::render(nvg);
+				rendering::render(nvg, { w, h });
 				nvgEndFrame(nvg);
 				glfwSwapBuffers(window);
 			}
