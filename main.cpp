@@ -21,13 +21,16 @@
 #include "rendering.h"
 #include "settings.h"
 #include "assets.h"
+#include "timing.h"
 
 namespace kane {
 	void run(GLFWwindow *window, NVGcontext *nvg) {
 		if (!assets::load(nvg)) return;
 		if (rendering::initialize(nvg)) {
+			timing::reset();
 			while (!glfwWindowShouldClose(window)) {
 				glfwPollEvents();
+				timing::tick();
 				glClearColor(0.5, 0.4, 0.3, 1);
 				glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 				int w, h;

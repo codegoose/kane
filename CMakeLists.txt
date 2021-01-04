@@ -8,6 +8,7 @@ add_executable(
 	rendering.cpp
 	settings.cpp
 	assets.cpp
+	timing.cpp
 )
 
 add_library(
