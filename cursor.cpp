@@ -68,5 +68,7 @@ void kane::cursor::initialize() {
 }
 
 void kane::cursor::shutdown() {
-
+	glfwSetCursor(glfw_window, 0);
+	for (auto &key : named_cells) glfwDestroyCursor(key.second);
+	named_cells.clear();
 }
