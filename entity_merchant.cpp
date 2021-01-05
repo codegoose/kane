@@ -29,14 +29,14 @@ void kane::entity::merchant_entity::anim_sheet_assign_cb(std::string anim_name, 
 		anim.num_wait_steps = 6;
 		anim.frame_xy_list = {
 			{ 0, 0 },
-		{ 1, 0 },
+			{ 1, 0 },
 			{ 2, 0 },
 			{ 3, 0 }
 		};
 		sl::debug("Configured idle animation for Merchant entity {}.", reinterpret_cast<void *>(this));
 	} else if (anim_name == "merchant-walk") {
 		anim.sheet_img = sprite_sheet_gl_handle;
-	anim.sheet_size = sheet_size;
+		anim.sheet_size = sheet_size;
 		anim.tile_size = {
 			anim.sheet_size.x / 5,
 			anim.sheet_size.y
