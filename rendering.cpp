@@ -84,7 +84,7 @@ bool kane::rendering::initialize(NVGcontext *nvg) {
 
 void kane::rendering::render(NVGcontext *nvg, glm::ivec2 framebuffer_size) {
 	nvgTranslate(nvg, framebuffer_size.x / 2, framebuffer_size.y / 2);
-	nvgScale(nvg, 2, 2);
+	nvgScale(nvg, 3, 3);
 	render_entity(nvg, merchant);
 }
 
