@@ -57,6 +57,13 @@ namespace kane::rendering {
 			anim_i->second.tile_size.x * -anim_i->second.frame_xy_list[anim_i->second.current_frame].x,
 			anim_i->second.tile_size.y * -anim_i->second.frame_xy_list[anim_i->second.current_frame].y
 		};
+		float transform[6], translation[6], scale[6];
+		nvgTransformIdentity(transform);
+		nvgTransformTranslate(translation, ent.pos.x, ent.pos.y);
+		nvgTransformScale(scale, ent.flipped ? -1 : 1, 1);
+		nvgTransformMultiply(transform, scale);
+		nvgTransformMultiply(transform, translation);
+		nvgTransform(nvg, transform[0], transform[1], transform[2], transform[3], transform[4], transform[5]);
 		render_sprite(nvg, anim_i->second);
 		ent.last_rendered_anim = ent.current_anim;
 	}
@@ -83,9 +90,12 @@ bool kane::rendering::initialize(NVGcontext *nvg) {
 }
 
 void kane::rendering::render(NVGcontext *nvg, glm::ivec2 framebuffer_size) {
-	nvgTranslate(nvg, framebuffer_size.x / 2, framebuffer_size.y / 2);
-	nvgScale(nvg, 3, 3);
-	render_entity(nvg, merchant);
+	for (auto ent : { &merchant, &npc }) {
+		nvgResetTransform(nvg);
+		nvgTranslate(nvg, framebuffer_size.x / 2, framebuffer_size.y / 2);
+		nvgScale(nvg, 3, 3);
+		render_entity(nvg, *ent);
+	}
 }
 
 void kane::rendering::shutdown(NVGcontext *nvg) {
