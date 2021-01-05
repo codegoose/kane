@@ -1,4 +1,3 @@
-
 #include "cursor.h"
 #include "assets.h"
 #include "logging.h"
