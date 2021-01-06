@@ -6,8 +6,12 @@
 #include "timing.h"
 
 #include "entity_merchant.h"
+#include "entity_shadow.h"
+
+#include <glm/glm.hpp>
 
 kane::entity::merchant_entity merchant;
+kane::entity::shadow_entity npc;
 
 namespace kane::rendering {
 
@@ -59,7 +63,7 @@ namespace kane::rendering {
 		};
 		float transform[6], translation[6], scale[6];
 		nvgTransformIdentity(transform);
-		nvgTransformTranslate(translation, ent.pos.x, ent.pos.y);
+		nvgTransformTranslate(translation, ent.pos.x, -ent.pos.y); // Y-axis is heading down by default, flip it
 		nvgTransformScale(scale, ent.flipped ? -1 : 1, 1);
 		nvgTransformMultiply(transform, scale);
 		nvgTransformMultiply(transform, translation);
@@ -77,10 +81,12 @@ namespace kane::rendering {
 
 	void update(double secs) {
 		update_entity(merchant, secs);
+		update_entity(npc, secs);
 	}
 }
 
 bool kane::rendering::initialize(NVGcontext *nvg) {
+	npc.flipped = true;
 	if (static bool first = true; first) {
 		timing::subscribe(update);
 		first = false;
@@ -90,12 +96,15 @@ bool kane::rendering::initialize(NVGcontext *nvg) {
 }
 
 void kane::rendering::render(NVGcontext *nvg, glm::ivec2 framebuffer_size) {
-	for (auto ent : { &merchant, &npc }) {
-		nvgResetTransform(nvg);
-		nvgTranslate(nvg, framebuffer_size.x / 2, framebuffer_size.y / 2);
-		nvgScale(nvg, 3, 3);
-		render_entity(nvg, *ent);
-	}
+	const int scale = glm::round(glm::max(1.f, framebuffer_size.y / 300.f));
+	nvgResetTransform(nvg);
+	nvgTranslate(nvg, framebuffer_size.x / 2, framebuffer_size.y / 2);
+	nvgScale(nvg, scale, scale);
+	render_entity(nvg, merchant);
+	nvgResetTransform(nvg);
+	nvgTranslate(nvg, framebuffer_size.x / 2, framebuffer_size.y / 2);
+	nvgScale(nvg, scale, scale);
+	render_entity(nvg, npc);
 }
 
 void kane::rendering::shutdown(NVGcontext *nvg) {

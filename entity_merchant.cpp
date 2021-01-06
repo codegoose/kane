@@ -1,5 +1,4 @@
 #include "entity_merchant.h"
-#include "logging.h"
 
 kane::entity::merchant_entity::merchant_entity() {
 	current_anim = "merchant-idle";
@@ -8,9 +7,10 @@ kane::entity::merchant_entity::merchant_entity() {
 }
 
 void kane::entity::merchant_entity::update(double secs) {
-	static double accum = 0;
-	accum += secs;
-	if (accum > 3) current_anim = "merchant-walk";
+	current_anim = "merchant-walk";
+	pos.x += (flipped ? -15 : 15) * secs;
+	if (pos.x > 50) flipped = true;
+	if (pos.x < -50) flipped = false;
 }
 
 void kane::entity::merchant_entity::anim_sheet_assign_cb(std::string anim_name, int sprite_sheet_gl_handle, glm::ivec2 sheet_size) {
@@ -33,7 +33,6 @@ void kane::entity::merchant_entity::anim_sheet_assign_cb(std::string anim_name, 
 			{ 2, 0 },
 			{ 3, 0 }
 		};
-		sl::debug("Configured idle animation for Merchant entity {}.", reinterpret_cast<void *>(this));
 	} else if (anim_name == "merchant-walk") {
 		anim.sheet_img = sprite_sheet_gl_handle;
 		anim.sheet_size = sheet_size;
@@ -53,6 +52,5 @@ void kane::entity::merchant_entity::anim_sheet_assign_cb(std::string anim_name, 
 			{ 3, 0 },
 			{ 4, 0 }
 		};
-		sl::debug("Configured walking animation for Merchant entity {}.", reinterpret_cast<void *>(this));
 	}
 }
