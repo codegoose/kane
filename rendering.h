@@ -3,6 +3,8 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <functional>
+
 #include <glm/vec2.hpp>
 
 #include "nanovg.h"
@@ -32,7 +34,9 @@ namespace kane::rendering {
 		std::map<std::string, std::string> anim_sheet_names;
 		std::string current_anim;
 		std::string last_rendered_anim;
-		virtual void update(double secs) = 0;
+		std::function<void(double)> update;
+		entity();
+		~entity();
 		virtual void anim_sheet_assign_cb(std::string anim_name, int sprite_sheet_gl_handle, glm::ivec2 sheet_size) = 0;
 	};
 

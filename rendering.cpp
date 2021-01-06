@@ -10,10 +10,9 @@
 
 #include <glm/glm.hpp>
 
-kane::entity::merchant_entity merchant;
-kane::entity::shadow_entity npc;
-
 namespace kane::rendering {
+
+	std::vector<entity *> entities;
 
 	void set_animation_frame(animation &anim, int frame) {
 		anim.steps_left_to_wait = anim.num_wait_steps;
@@ -75,38 +74,42 @@ namespace kane::rendering {
 	void update_entity(entity &ent, double secs) {
 		auto anim = ent.anims.find(ent.current_anim);
 		if (anim == ent.anims.end() || anim->second.sheet_img == 0) return;
-		ent.update(secs);
+		if (ent.update) ent.update(secs);
 		step_animation(ent.anims[ent.current_anim]);
 	}
 
 	void update(double secs) {
-		update_entity(merchant, secs);
-		update_entity(npc, secs);
+		for (auto ent : entities) update_entity(*ent, secs);
 	}
 }
 
 bool kane::rendering::initialize(NVGcontext *nvg) {
-	npc.flipped = true;
 	if (static bool first = true; first) {
 		timing::subscribe(update);
 		first = false;
 	}
-	settings::persist["rendering-init-num"] = settings::persist.value("rendering-init-num", 0) + 1;
+	settings::persist["rendering-init-num"] = settings::persist.value("rendering-init-num", 0) + 1;;
 	return true;
 }
 
 void kane::rendering::render(NVGcontext *nvg, glm::ivec2 framebuffer_size) {
 	const int scale = glm::round(glm::max(1.f, framebuffer_size.y / 300.f));
-	nvgResetTransform(nvg);
-	nvgTranslate(nvg, framebuffer_size.x / 2, framebuffer_size.y / 2);
-	nvgScale(nvg, scale, scale);
-	render_entity(nvg, merchant);
-	nvgResetTransform(nvg);
-	nvgTranslate(nvg, framebuffer_size.x / 2, framebuffer_size.y / 2);
-	nvgScale(nvg, scale, scale);
-	render_entity(nvg, npc);
+	for (auto ent : entities) {
+		nvgResetTransform(nvg);
+		nvgTranslate(nvg, framebuffer_size.x / 2, framebuffer_size.y / 2);
+		nvgScale(nvg, scale, scale);
+		render_entity(nvg, *ent);
+	}
 }
 
 void kane::rendering::shutdown(NVGcontext *nvg) {
 
+}
+
+kane::rendering::entity::entity() {
+	entities.push_back(this);
+}
+
+kane::rendering::entity::~entity() {
+	entities.erase(std::find(entities.begin(), entities.end(), this));
 }
