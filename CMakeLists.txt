@@ -12,6 +12,7 @@ add_executable(
 	timing.cpp
 	cursor.cpp
 	entity_merchant.cpp
+	entity_shadow.cpp
 )
 
 #add_library(
