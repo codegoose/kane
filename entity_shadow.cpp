@@ -23,8 +23,12 @@ void kane::entity::shadow_entity::update(double secs) {
 		current_anim = "shadow-charge";
 	} else if (state < 12.f) {
 		current_anim = "shadow-idle";
+	} else if (state < 16.f) {
+		current_anim = "shadow-attack-1";
+	} else if (state < 20.f) {
+		current_anim = "shadow-attack-2";
 	} else {
-		state = 0.f;
+		current_anim = "shadow-idle";
 	}
 }
 
@@ -86,6 +90,89 @@ void kane::entity::shadow_entity::anim_sheet_assign_cb(std::string anim_name, in
 			{ 0, 5 },
 			{ 0, 6 },
 			{ 0, 7 }
+		};
+	} else if (anim_name == "shadow-damage") {
+		anim.sheet_img = sprite_sheet_gl_handle;
+		anim.sheet_size = sheet_size;
+		anim.tile_size = {
+			anim.sheet_size.x,
+			anim.sheet_size.y / 9
+		};
+		anim.tile_off = {
+			-anim.tile_size.x / 2,
+			-anim.tile_size.y
+		};
+		anim.num_wait_steps = 4;
+		anim.frame_xy_list = {
+			{ 0, 0 },
+			{ 0, 1 },
+			{ 0, 2 },
+			{ 0, 3 },
+			{ 0, 4 },
+			{ 0, 5 },
+			{ 0, 6 },
+			{ 0, 7 },
+			{ 0, 8 }
+		};
+	} else if (anim_name == "shadow-attack-1") {
+		anim.sheet_img = sprite_sheet_gl_handle;
+		anim.sheet_size = sheet_size;
+		anim.tile_size = {
+			anim.sheet_size.x,
+			anim.sheet_size.y / 22
+		};
+		anim.tile_off = {
+			-anim.tile_size.x / 2,
+			-anim.tile_size.y
+		};
+		anim.num_wait_steps = 3;
+		anim.frame_xy_list = {
+			{ 0, 0 },
+			{ 0, 1 },
+			{ 0, 2 },
+			{ 0, 3 },
+			{ 0, 4 },
+			{ 0, 5 },
+			{ 0, 6 },
+			{ 0, 7 },
+			{ 0, 8 },
+			{ 0, 9 },
+			{ 0, 10 },
+			{ 0, 11 },
+			{ 0, 12 },
+			{ 0, 13 },
+			{ 0, 14 },
+			{ 0, 15 },
+			{ 0, 16 },
+			{ 0, 17 },
+			{ 0, 18 },
+			{ 0, 19 },
+			{ 0, 20 },
+			{ 0, 21 }
+		};
+	} else if (anim_name == "shadow-attack-2") {
+		anim.sheet_img = sprite_sheet_gl_handle;
+		anim.sheet_size = sheet_size;
+		anim.tile_size = {
+			anim.sheet_size.x,
+			anim.sheet_size.y / 10
+		};
+		anim.tile_off = {
+			-anim.tile_size.x / 2,
+			-anim.tile_size.y
+		};
+		anim.num_wait_steps = 3;
+		anim.frame_xy_list = {
+			{ 0, 0 },
+			{ 0, 1 },
+			{ 0, 2 },
+			{ 0, 3 },
+			{ 0, 4 },
+			{ 0, 5 },
+			{ 0, 6 },
+			{ 0, 7 },
+			{ 0, 8 },
+			{ 0, 9 }
 		};
 	}
 }
