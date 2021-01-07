@@ -16,11 +16,21 @@ namespace kane::rendering {
 		anim.current_frame = frame;
 	}
 
-	void step_animation(animation &anim) {
+	void step_animation(entity &ent, animation &anim) {
 		anim.steps_left_to_wait--;
 		if (anim.steps_left_to_wait > 0) return;
 		anim.current_frame++;
-		if (anim.current_frame >= anim.frame_xy_list.size()) anim.current_frame = 0;
+		if (anim.current_frame >= anim.frame_xy_list.size()) {
+			if (anim.loop) anim.current_frame = 0;
+			else {
+				if (anim.next_anim == "") anim.current_frame = anim.frame_xy_list.size() - 1;
+				else {
+					ent.current_anim = anim.next_anim;
+					set_animation_frame(ent.anims[ent.current_anim], 0);
+					return;
+				}
+			}
+		}
 		set_animation_frame(anim, anim.current_frame);
 	}
 
@@ -71,7 +81,7 @@ namespace kane::rendering {
 	void update_entity(entity &ent, double secs) {
 		auto anim = ent.anims.find(ent.current_anim);
 		if (anim == ent.anims.end() || anim->second.sheet_img == 0) return;
-		step_animation(ent.anims[ent.current_anim]);
+		step_animation(ent, ent.anims[ent.current_anim]);
 	}
 
 	void update(double secs) {

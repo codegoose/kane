@@ -26,6 +26,8 @@ namespace kane::rendering {
 		int num_wait_steps { 1 };
 		std::vector<glm::ivec2> frame_xy_list;
 		int current_frame { 0 };
+		bool loop = true;
+		std::string next_anim;
 	};
 
 	struct entity {
