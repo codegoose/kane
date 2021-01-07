@@ -21,6 +21,8 @@
 #include <kane/assets.h>
 #include <kane/timing.h>
 #include <kane/cursor.h>
+#include <kane/input.h>
+#include <kane/local_player.h>
 
 namespace kane {
 	void run(GLFWwindow *window, NVGcontext *nvg) {
@@ -28,8 +30,11 @@ namespace kane {
 		cursor::initialize(window);
 		if (rendering::initialize(nvg)) {
 			timing::reset();
+			input::initialize(window);
+			lp::initialize();
 			while (!glfwWindowShouldClose(window)) {
 				glfwPollEvents();
+				input::update(window);
 				timing::tick();
 				glClearColor(0.5, 0.4, 0.3, 1);
 				glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -40,7 +45,10 @@ namespace kane {
 				rendering::render(nvg, { w, h });
 				nvgEndFrame(nvg);
 				glfwSwapBuffers(window);
+				glfwSwapInterval(1);
 			}
+			lp::shutdown();
+			input::shutdown();
 			rendering::shutdown(nvg);
 		} else sl::error("Unable to initialize the rendering subsystem.");
 		cursor::shutdown(window);
@@ -61,13 +69,12 @@ int main() {
 	glfwSetErrorCallback([](int code, const char *what) { sl::error("{}.", what); });
 	if (glfwInit() == GLFW_TRUE) {
 		glfwWindowHint(GLFW_VISIBLE, 0);
-		if (auto window = glfwCreateWindow(1024, 768, "GLFW", 0, 0); window) {
+		if (auto window = glfwCreateWindow(1920, 1080, "GLFW", 0, 0); window) {
 			glewExperimental = GL_TRUE;
 			glfwMakeContextCurrent(window);
 			if (glewInit() == GLEW_OK) {
 				sl::debug("OpenGL {} via {}.", glGetString(GL_VERSION), glGetString(GL_RENDERER));
 				if (auto nvg = nvgCreateGL3(NVG_ANTIALIAS | NVG_STENCIL_STROKES); nvg) {
-					glfwSwapInterval(1);
 					glfwShowWindow(window);
 					kane::run(window, nvg);
 					glfwHideWindow(window);
