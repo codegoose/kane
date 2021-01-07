@@ -13,6 +13,7 @@ namespace kane::rendering {
 
 	struct sprite {
 		int sheet_img = 0;
+		float alpha = 1;
 		glm::ivec2 tile_pos { 0, 0 };
 		glm::ivec2 tile_size { 0, 0 };
 		glm::ivec2 tile_off { 0, 0 };

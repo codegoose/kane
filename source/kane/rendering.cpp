@@ -36,7 +36,7 @@ namespace kane::rendering {
 				spr.sheet_size.y,
 				0,
 				spr.sheet_img,
-				1
+				spr.alpha
 			)
 		);
 		nvgFill(nvg);
