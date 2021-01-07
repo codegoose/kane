@@ -105,13 +105,6 @@ void kane::pc::shadow_entity::anim_sheet_assign_cb(std::string anim_name, int sp
 		};
 		anim.num_wait_steps = 3;
 		anim.frame_xy_list = {
-			{ 0, 0 },
-			{ 0, 1 },
-			{ 0, 2 },
-			{ 0, 3 },
-			{ 0, 4 },
-			{ 0, 5 },
-			{ 0, 6 },
 			{ 0, 7 },
 			{ 0, 8 },
 			{ 0, 9 },
@@ -128,6 +121,8 @@ void kane::pc::shadow_entity::anim_sheet_assign_cb(std::string anim_name, int sp
 			{ 0, 20 },
 			{ 0, 21 }
 		};
+		anim.loop = false;
+		anim.next_anim = "shadow-idle";
 	} else if (anim_name == "shadow-attack-2") {
 		anim.sheet_img = sprite_sheet_gl_handle;
 		anim.sheet_size = sheet_size;
@@ -141,8 +136,6 @@ void kane::pc::shadow_entity::anim_sheet_assign_cb(std::string anim_name, int sp
 		};
 		anim.num_wait_steps = 3;
 		anim.frame_xy_list = {
-			{ 0, 0 },
-			{ 0, 1 },
 			{ 0, 2 },
 			{ 0, 3 },
 			{ 0, 4 },
@@ -152,5 +145,7 @@ void kane::pc::shadow_entity::anim_sheet_assign_cb(std::string anim_name, int sp
 			{ 0, 8 },
 			{ 0, 9 }
 		};
+		anim.loop = false;
+		anim.next_anim = "shadow-idle";
 	}
 }
