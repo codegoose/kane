@@ -3,7 +3,7 @@ This is a short guide on how to build this software on Windows. This project isn
 # Installing MSYS2
 
 1. Use [Scoop](https://scoop.sh/) to install ```msys2```.
-2. Add ```scoop\apps\msys2\current\mingw64\bin``` and ```C:\Users\Brandon\scoop\apps\msys2\current\usr\bin``` to your path variable in that order.
+2. Add ```scoop\apps\msys2\current\mingw64\bin``` and ```scoop\apps\msys2\current\usr\bin``` to your path variable in that order.
 
 # Installing Required Packages
 
