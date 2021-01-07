@@ -11,6 +11,7 @@ add_executable(
 	source/kane/assets.cpp
 	source/kane/timing.cpp
 	source/kane/cursor.cpp
+	source/kane/local_player.cpp
 	source/kane/entity_merchant.cpp
 	source/kane/entity_shadow.cpp
 )
