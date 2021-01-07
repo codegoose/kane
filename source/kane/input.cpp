@@ -5,6 +5,8 @@
 
 kane::input::type kane::input::active_device_type = kane::input::type::keyboard;
 glm::vec2 kane::input::lp_movement;
+bool kane::input::lp_attack_1 = false;
+bool kane::input::lp_attack_2 = false;
 
 namespace kane::input {
 
@@ -22,6 +24,9 @@ namespace kane::input {
 			}
 			fullscreen = !fullscreen;
 		}
+		if (key == GLFW_KEY_SPACE) lp_attack_1 = (action == GLFW_PRESS);
+		if (key == GLFW_KEY_F) lp_attack_2 = (action == GLFW_PRESS);
+		sl::info("Attack: {}, {}", lp_attack_1, lp_attack_2);
 	}
 }
 

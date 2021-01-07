@@ -12,7 +12,7 @@ std::map<std::string, int> kane::assets::sprite_sheet_gl_handles;
 std::map<std::string, std::pair<glm::ivec2, std::vector<uint8_t>>> kane::assets::sprite_sheet_pixel_data;
 
 bool kane::assets::load(NVGcontext *nvg) {
-	for (auto &file : std::filesystem::directory_iterator("C:\\Users\\Brandon\\Documents\\Assets\\")) {
+	for (auto &file : std::filesystem::directory_iterator("assets")) {
 		if (file.path().extension() != ".png") continue;
 		std::ifstream in(file.path().string().c_str(), std::ios::binary);
 		if (!in.is_open()) {
