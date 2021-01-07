@@ -37,7 +37,7 @@ namespace kane::rendering {
 		std::string last_rendered_anim;
 		std::function<void(double)> update;
 		entity();
-		~entity();
+		virtual ~entity();
 		virtual void anim_sheet_assign_cb(std::string anim_name, int sprite_sheet_gl_handle, glm::ivec2 sheet_size) = 0;
 	};
 
