@@ -16,5 +16,5 @@ namespace kane::input {
 
 	void initialize(GLFWwindow *window);
 	void shutdown();
-	void update(double secs);
+	void update(GLFWwindow *window);
 }
