@@ -1,7 +1,9 @@
 #pragma once
 
+struct GLFWwindow;
+
 namespace kane::cursor{
 
-	void initialize();
-	void shutdown();
+	void initialize(GLFWwindow *window);
+	void shutdown(GLFWwindow *window);
 }

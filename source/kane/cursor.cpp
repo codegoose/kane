@@ -9,10 +9,6 @@
 #include <GLFW/glfw3.h>
 #include <fmt/core.h>
 
-namespace kane {
-	extern GLFWwindow *glfw_window;
-}
-
 namespace kane::cursor {
 	std::map<std::string, GLFWcursor *> named_cells;
 }
@@ -33,7 +29,7 @@ static int *make_resized_image(int* pixels,int w1,int h1,int w2,int h2)  {
 	return retval;
 }
 
-void kane::cursor::initialize() {
+void kane::cursor::initialize(GLFWwindow *window) {
 	auto pixels = assets::sprite_sheet_pixel_data.find("cursors");
 	if (pixels == assets::sprite_sheet_pixel_data.end()) {
 		sl::warn("Unable to apply cursor theme due to missing sprite sheet.");
@@ -62,12 +58,12 @@ void kane::cursor::initialize() {
 			named_cells[fmt::format("{}-{}", x, y)] = cursor;
 		}
 	}
-	glfwSetCursor(glfw_window, named_cells["0-0"]);
+	glfwSetCursor(window, named_cells["0-0"]);
 	delete[] upscaled_sheet;
 }
 
-void kane::cursor::shutdown() {
-	glfwSetCursor(glfw_window, 0);
+void kane::cursor::shutdown(GLFWwindow *window) {
+	glfwSetCursor(window, 0);
 	for (auto &key : named_cells) glfwDestroyCursor(key.second);
 	named_cells.clear();
 }
