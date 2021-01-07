@@ -69,7 +69,7 @@ int main() {
 	glfwSetErrorCallback([](int code, const char *what) { sl::error("{}.", what); });
 	if (glfwInit() == GLFW_TRUE) {
 		glfwWindowHint(GLFW_VISIBLE, 0);
-		if (auto window = glfwCreateWindow(1920, 1080, "GLFW", 0, 0); window) {
+		if (auto window = glfwCreateWindow(1024, 768, "Kane", 0, 0); window) {
 			glewExperimental = GL_TRUE;
 			glfwMakeContextCurrent(window);
 			if (glewInit() == GLEW_OK) {
