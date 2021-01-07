@@ -71,7 +71,6 @@ namespace kane::rendering {
 	void update_entity(entity &ent, double secs) {
 		auto anim = ent.anims.find(ent.current_anim);
 		if (anim == ent.anims.end() || anim->second.sheet_img == 0) return;
-		if (ent.update) ent.update(secs);
 		step_animation(ent.anims[ent.current_anim]);
 	}
 
