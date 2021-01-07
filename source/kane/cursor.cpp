@@ -1,10 +1,10 @@
-#include "cursor.h"
-#include "assets.h"
-#include "logging.h"
-#include "stb_image_resize.h"
+#include <kane/cursor.h>
+#include <kane/assets.h>
+#include <kane/logging.h>
 
 #include <cstdint>
 #include <vector>
+#include <stb_image_resize.h>
 #include <glm/vec2.hpp>
 #include <GLFW/glfw3.h>
 #include <fmt/core.h>

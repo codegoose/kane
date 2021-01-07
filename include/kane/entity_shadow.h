@@ -1,6 +1,6 @@
 #pragma once
 
-#include "rendering.h"
+#include <kane/rendering.h>
 
 namespace kane::pc {
 	struct shadow_entity : kane::rendering::entity {

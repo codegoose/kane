@@ -1,13 +1,10 @@
-#include "rendering.h"
-#include "logging.h"
-#include "nanovg.h"
-#include "settings.h"
-#include "assets.h"
-#include "timing.h"
+#include <kane/rendering.h>
+#include <kane/logging.h>
+#include <kane/settings.h>
+#include <kane/assets.h>
+#include <kane/timing.h>
 
-#include "entity_merchant.h"
-#include "entity_shadow.h"
-
+#include <nanovg.h>
 #include <glm/glm.hpp>
 
 namespace kane::rendering {

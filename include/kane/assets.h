@@ -8,7 +8,7 @@
 
 #include <glm/vec2.hpp>
 
-#include "nanovg.h"
+struct NVGcontext;
 
 namespace kane::assets {
 

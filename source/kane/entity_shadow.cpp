@@ -1,4 +1,4 @@
-#include "entity_shadow.h"
+#include <kane/entity_shadow.h>
 
 kane::pc::shadow_entity::shadow_entity() {
 	current_anim = "shadow-idle";

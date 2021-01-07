@@ -1,11 +1,12 @@
-#include "assets.h"
-#include "nanovg.h"
-#include "logging.h"
-#include "stb_image.h"
+#include <kane/assets.h>
+#include <kane/logging.h>
+
+#include <nanovg.h>
+#include <stb_image.h>
+#include <GL/glew.h>
 
 #include <fstream>
 #include <filesystem>
-#include <GL/glew.h>
 
 std::map<std::string, int> kane::assets::sprite_sheet_gl_handles;
 std::map<std::string, std::pair<glm::ivec2, std::vector<uint8_t>>> kane::assets::sprite_sheet_pixel_data;

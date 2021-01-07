@@ -22,7 +22,7 @@ This amounts to using Clang to compile and LLD to link. The biggest benefit here
 ## Dependency Packages
 
 ```
-mingw-w64-x86_64-spdlog mingw-w64-x86_64-fmt mingw-w64-x86_64-glew mingw-w64-x86_64-glm mingw-w64-x86_64-glfw mingw-w64-x86_64-nlohmann-json
+mingw-w64-x86_64-spdlog mingw-w64-x86_64-fmt mingw-w64-x86_64-glew mingw-w64-x86_64-glm mingw-w64-x86_64-glfw mingw-w64-x86_64-nlohmann-json mingw-w64-x86_64-freetype
 ```
 
 # Building

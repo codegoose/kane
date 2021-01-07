@@ -1,4 +1,4 @@
-#include "entity_merchant.h"
+#include <kane/entity_merchant.h>
 
 kane::pc::merchant_entity::merchant_entity() {
 	current_anim = "merchant-idle";

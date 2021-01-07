@@ -1,0 +1,14 @@
+{
+	"configurations": [
+		{
+			"name": "Default",
+			"includePath": [
+				"${workspaceFolder}/third-party/include",
+				"${workspaceFolder}/include",
+				"${default}"
+			],
+			"defines": []
+		}
+	],
+	"version": 4
+}

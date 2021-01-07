@@ -15,12 +15,12 @@
 #define NANOVG_GL3_IMPLEMENTATION
 #include "nanovg_gl.h"
 
-#include "logging.h"
-#include "rendering.h"
-#include "settings.h"
-#include "assets.h"
-#include "timing.h"
-#include "cursor.h"
+#include <kane/logging.h>
+#include <kane/rendering.h>
+#include <kane/settings.h>
+#include <kane/assets.h>
+#include <kane/timing.h>
+#include <kane/cursor.h>
 
 namespace kane {
 	GLFWwindow *glfw_window = 0;
