@@ -34,6 +34,7 @@ namespace kane {
 			input::initialize(window);
 			lp::initialize();
 			audio::initialize();
+			glfwShowWindow(window);
 			while (!glfwWindowShouldClose(window)) {
 				glfwPollEvents();
 				input::update(window);
@@ -49,6 +50,7 @@ namespace kane {
 				glfwSwapBuffers(window);
 				glfwSwapInterval(1);
 			}
+			glfwHideWindow(window);
 			audio::shutdown();
 			lp::shutdown();
 			input::shutdown();
@@ -78,9 +80,7 @@ int main() {
 			if (glewInit() == GLEW_OK) {
 				sl::debug("OpenGL {} via {}.", glGetString(GL_VERSION), glGetString(GL_RENDERER));
 				if (auto nvg = nvgCreateGL3(NVG_ANTIALIAS | NVG_STENCIL_STROKES); nvg) {
-					glfwShowWindow(window);
 					kane::run(window, nvg);
-					glfwHideWindow(window);
 					nvgDeleteGL3(nvg);
 				} else sl::error("Unable to initialize NanoVG.");
 			} else sl::error("Failed to load OpenGL functioanlity.");
