@@ -96,7 +96,7 @@ bool kane::rendering::initialize(NVGcontext *nvg) {
 		timing::subscribe(update);
 		first = false;
 	}
-	settings::persist["rendering-init-num"] = settings::persist.value("rendering-init-num", 0) + 1;;
+	settings::persist["rendering-init-num"] = settings::persist.value("rendering-init-num", 0) + 1;
 	return true;
 }
 
