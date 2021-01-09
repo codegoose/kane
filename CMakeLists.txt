@@ -15,6 +15,7 @@ add_executable(
 	source/kane/local_player.cpp
 	source/kane/entity_merchant.cpp
 	source/kane/entity_shadow.cpp
+	source/kane/camera.cpp
 )
 
 add_library(

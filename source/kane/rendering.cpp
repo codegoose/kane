@@ -3,6 +3,8 @@
 #include <kane/settings.h>
 #include <kane/assets.h>
 #include <kane/timing.h>
+#include <kane/camera.h>
+#include <kane/local_player.h>
 
 #include <nanovg.h>
 #include <glm/glm.hpp>
@@ -99,11 +101,16 @@ bool kane::rendering::initialize(NVGcontext *nvg) {
 }
 
 void kane::rendering::render(NVGcontext *nvg, glm::ivec2 framebuffer_size) {
-	const int scale = glm::round(glm::max(1.f, framebuffer_size.y / 300.f));
+	camera::pos = lp::entity->pos;
+	camera::scale = glm::round(glm::max(1.f, framebuffer_size.y / 300.f));
 	for (auto ent : entities) {
 		nvgResetTransform(nvg);
-		nvgTranslate(nvg, framebuffer_size.x / 2, framebuffer_size.y / 2);
-		nvgScale(nvg, scale, scale);
+		nvgTranslate(
+			nvg,
+			glm::round((framebuffer_size.x * .5f) - (camera::pos.x * camera::scale)),
+			glm::round((framebuffer_size.y * .5f) - (camera::pos.y * camera::scale))
+		);
+		nvgScale(nvg, camera::scale, camera::scale);
 		render_entity(nvg, *ent);
 	}
 }
