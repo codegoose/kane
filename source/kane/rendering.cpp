@@ -89,6 +89,43 @@ namespace kane::rendering {
 	void update(double secs) {
 		for (auto ent : entities) update_entity(*ent, secs);
 	}
+
+	void render_bg_asset(NVGcontext *nvg, int x, int y, int w, int h, float tx_scale, int gl_tex_id, glm::ivec2 framebuffer_size) {
+		nvgResetTransform(nvg);
+		nvgTranslate(
+			nvg,
+			glm::round((framebuffer_size.x * .5f) - (camera::pos.x * camera::scale * tx_scale)),
+			glm::round((framebuffer_size.y * .5f) + (camera::pos.y * camera::scale * tx_scale))
+		);
+		nvgScale(nvg, camera::scale, camera::scale);
+		nvgBeginPath(nvg);
+		nvgRect(nvg, x, y, w, h);
+		nvgFillPaint(nvg, nvgImagePattern(nvg, x, y, w, h, 0, gl_tex_id, 1));
+		nvgFill(nvg);
+	}
+
+	void render_bg_parallax(NVGcontext *nvg, glm::ivec2 framebuffer_size) {
+		// auto scene_view_size = glm::fvec2(framebuffer_size) / camera::scale;
+		// sl::info("{} <-> {}", camera::pos.x - (scene_view_size.x * .5f), camera::pos.x + (scene_view_size.x * .5f));
+		{
+			auto img_glid = assets::sprite_sheet_gl_handles["bg-city-2-far"];
+			int img_w, img_h;
+			nvgImageSize(nvg, img_glid, &img_w, &img_h);
+			for (int i = -8; i < 8; i++) render_bg_asset(nvg, img_w * i, -img_h, img_w, img_h, .1f, img_glid, framebuffer_size);
+		}
+		{
+			auto img_glid = assets::sprite_sheet_gl_handles["bg-city-2-med"];
+			int img_w, img_h;
+			nvgImageSize(nvg, img_glid, &img_w, &img_h);
+			for (int i = -12; i < 12; i++) render_bg_asset(nvg, img_w * i, -img_h, img_w, img_h, .35f, img_glid, framebuffer_size);
+		}
+		{
+			auto img_glid = assets::sprite_sheet_gl_handles["bg-city-2-close"];
+			int img_w, img_h;
+			nvgImageSize(nvg, img_glid, &img_w, &img_h);
+			for (int i = -16; i < 16; i++) render_bg_asset(nvg, img_w * i, -img_h, img_w, img_h, .8f, img_glid, framebuffer_size);
+		}
+	}
 }
 
 bool kane::rendering::initialize(NVGcontext *nvg) {
@@ -103,6 +140,7 @@ bool kane::rendering::initialize(NVGcontext *nvg) {
 void kane::rendering::render(NVGcontext *nvg, glm::ivec2 framebuffer_size) {
 	camera::pos = lp::entity->pos;
 	camera::scale = glm::round(glm::max(1.f, framebuffer_size.y / 300.f));
+	render_bg_parallax(nvg, framebuffer_size);
 	for (auto ent : entities) {
 		nvgResetTransform(nvg);
 		nvgTranslate(
