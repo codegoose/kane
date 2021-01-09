@@ -23,6 +23,7 @@
 #include <kane/cursor.h>
 #include <kane/input.h>
 #include <kane/local_player.h>
+#include <kane/audio.h>
 
 namespace kane {
 	void run(GLFWwindow *window, NVGcontext *nvg) {
@@ -32,6 +33,7 @@ namespace kane {
 			timing::reset();
 			input::initialize(window);
 			lp::initialize();
+			audio::initialize();
 			while (!glfwWindowShouldClose(window)) {
 				glfwPollEvents();
 				input::update(window);
@@ -47,6 +49,7 @@ namespace kane {
 				glfwSwapBuffers(window);
 				glfwSwapInterval(1);
 			}
+			audio::shutdown();
 			lp::shutdown();
 			input::shutdown();
 			rendering::shutdown(nvg);

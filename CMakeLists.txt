@@ -16,6 +16,7 @@ add_executable(
 	source/kane/entity_merchant.cpp
 	source/kane/entity_shadow.cpp
 	source/kane/camera.cpp
+	source/kane/audio.cpp
 )
 
 add_library(
@@ -48,4 +49,4 @@ target_include_directories(nanovg PUBLIC third-party/include)
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 target_include_directories(${PROJECT_NAME} PUBLIC include third-party/include)
-target_link_libraries(${PROJECT_NAME} PUBLIC nanovg imgui glfw3 fmt glew32 opengl32)
+target_link_libraries(${PROJECT_NAME} PUBLIC nanovg imgui sfml-audio glfw3 fmt glew32 opengl32)
