@@ -60,7 +60,7 @@ namespace kane::lp {
 			if (input::lp_movement.x != 0) {
 				entity->current_anim = "shadow-run";
 				entity->flipped = input::lp_movement.x >= 0 ? false : true;
-				entity->pos += input::lp_movement * 50.f * static_cast<float>(secs);
+				entity->pos.x += input::lp_movement.x * 50.f * static_cast<float>(secs);
 				idle_time = 0;
 			} else {
 				idle_time += secs;
