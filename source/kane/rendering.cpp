@@ -108,7 +108,7 @@ void kane::rendering::render(NVGcontext *nvg, glm::ivec2 framebuffer_size) {
 		nvgTranslate(
 			nvg,
 			glm::round((framebuffer_size.x * .5f) - (camera::pos.x * camera::scale)),
-			glm::round((framebuffer_size.y * .5f) - (camera::pos.y * camera::scale))
+			glm::round((framebuffer_size.y * .5f) + (camera::pos.y * camera::scale))
 		);
 		nvgScale(nvg, camera::scale, camera::scale);
 		render_entity(nvg, *ent);
