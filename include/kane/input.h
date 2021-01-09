@@ -15,6 +15,8 @@ namespace kane::input {
 	extern glm::vec2 lp_movement;
 	extern bool lp_attack_1;
 	extern bool lp_attack_2;
+	extern bool lp_util_1;
+	extern bool lp_util_2;
 
 	void initialize(GLFWwindow *window);
 	void shutdown();

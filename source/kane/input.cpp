@@ -7,6 +7,8 @@ kane::input::type kane::input::active_device_type = kane::input::type::keyboard;
 glm::vec2 kane::input::lp_movement;
 bool kane::input::lp_attack_1 = false;
 bool kane::input::lp_attack_2 = false;
+bool kane::input::lp_util_1 = false;
+bool kane::input::lp_util_2 = false;
 
 namespace kane::input {
 
@@ -26,7 +28,14 @@ namespace kane::input {
 		}
 		if (key == GLFW_KEY_SPACE) lp_attack_1 = (action == GLFW_PRESS);
 		if (key == GLFW_KEY_F) lp_attack_2 = (action == GLFW_PRESS);
-		sl::info("Attack: {}, {}", lp_attack_1, lp_attack_2);
+		if (key == GLFW_KEY_Q) {
+			if (action == GLFW_PRESS || action == GLFW_REPEAT) lp_util_1 = true;
+			else if (action == GLFW_RELEASE) lp_util_1 = false;
+		}
+		if (key == GLFW_KEY_Z) {
+			if (action == GLFW_PRESS || action == GLFW_REPEAT) lp_util_2 = true;
+			else if (action == GLFW_RELEASE) lp_util_2 = false;
+		}
 	}
 }
 
