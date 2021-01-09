@@ -45,13 +45,13 @@ namespace kane::lp {
 	void become_shadow_entity() {
 		entity = std::make_unique<pc::shadow_entity>();
 		entity->update = [](double secs) {
-			if (input::lp_util_1) {
-				entity->current_anim = "shadow-charge";
+			if (entity->current_anim == "shadow-attack-1" || entity->current_anim == "shadow-attack-2") {
 				for (auto &anim : entity->anims) anim.second.alpha = 1;
 				idle_time = 0;
 				return;
 			}
-			if (entity->current_anim == "shadow-attack-1" || entity->current_anim == "shadow-attack-2") {
+			if (input::lp_util_1) {
+				entity->current_anim = "shadow-charge";
 				for (auto &anim : entity->anims) anim.second.alpha = 1;
 				idle_time = 0;
 				return;
