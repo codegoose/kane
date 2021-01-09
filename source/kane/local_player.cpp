@@ -25,6 +25,7 @@ namespace kane::lp {
 
 	void make_random_merchant() {
 		merchant = new pc::merchant_entity;
+		merchant->pos.x = 100;
 		merchant->update = [](double secs) {
 			static float tmp = 0;
 			tmp += secs;
