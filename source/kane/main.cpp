@@ -36,7 +36,7 @@ namespace kane {
 				glfwPollEvents();
 				input::update(window);
 				timing::tick();
-				glClearColor(0.5, 0.4, 0.3, 1);
+				glClearColor(75 * (1.f / 255.f), 74 * (1.f / 255.f), 80.f * (1.f / 255.f), 1);
 				glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 				int w, h;
 				glfwGetFramebufferSize(window, &w, &h);
