@@ -20,6 +20,7 @@ void kane::audio::initialize() {
 	bg_music = std::make_unique<sf::Sound>();
 	bg_music->setBuffer(*bg_music_buf);
 	bg_music->setVolume(40);
+	bg_music->setLoop(true);
 	bg_music->play();
 }
 
