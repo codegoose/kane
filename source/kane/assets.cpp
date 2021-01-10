@@ -13,7 +13,20 @@
 std::map<std::string, int> kane::assets::sprite_sheet_gl_handles;
 std::map<std::string, std::pair<glm::ivec2, std::vector<uint8_t>>> kane::assets::sprite_sheet_pixel_data;
 
+namespace kane::assets {
+	void prepare_fonts(NVGcontext *nvg) {
+		for (auto &emb : emico::assets) {
+			if (emb.first.substr(0, 6) != "fonts.") continue;
+			auto name = emb.first.substr(6, emb.first.size() - 4 - 6);
+			auto fnt = nvgCreateFontMem(nvg, name.c_str(), (unsigned char *)emb.second.first, emb.second.second, 0);
+			if (fnt == -1) sl::warn("Failed to prepare font from embedded assets: {} -> {}", emb.first, name);
+			else sl::debug("Prepared font from embedded assets: {} -> {} (font #{})", emb.first, name, fnt);
+		}
+	}
+}
+
 bool kane::assets::load(NVGcontext *nvg) {
+	prepare_fonts(nvg);
 	for (auto &emb : emico::assets) {
 		if (emb.first.substr(0, strlen("sprites.")) != "sprites.") continue;
 		int w, h, num_chan;

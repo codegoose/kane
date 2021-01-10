@@ -137,6 +137,15 @@ namespace kane::rendering {
 			for (int i = -16; i < 16; i++) render_bg_asset(nvg, img_w * i, -img_h, img_w, img_h, .8f, img_glid, framebuffer_size);
 		}
 	}
+
+	void render_ui(NVGcontext *nvg, glm::ivec2 framebuffer_size) {
+		nvgResetTransform(nvg);
+		nvgFontFace(nvg, "comfortaa");
+		nvgFontSize(nvg, glm::round(10 * camera::scale));
+		nvgFillColor(nvg, nvgRGBA(255, 255, 255, 128));
+		nvgTextAlign(nvg, NVG_ALIGN_LEFT | NVG_ALIGN_BOTTOM);
+		nvgText(nvg, glm::round(10 * camera::scale), framebuffer_size.y - glm::round(10 * camera::scale), "Project Kane - Alpha", 0);
+	}
 }
 
 bool kane::rendering::initialize(NVGcontext *nvg) {
@@ -162,6 +171,7 @@ void kane::rendering::render(NVGcontext *nvg, glm::ivec2 framebuffer_size) {
 		nvgScale(nvg, camera::scale, camera::scale);
 		render_entity(nvg, *ent);
 	}
+	render_ui(nvg, framebuffer_size);
 }
 
 void kane::rendering::shutdown(NVGcontext *nvg) {

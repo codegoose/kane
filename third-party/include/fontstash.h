@@ -145,6 +145,7 @@ void fonsDrawDebug(FONScontext* s, float x, float y);
 
 #define FONS_NOTUSED(v)  (void)sizeof(v)
 
+#define FONS_USE_FREETYPE
 #ifdef FONS_USE_FREETYPE
 
 #include <ft2build.h>
