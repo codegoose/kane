@@ -56,13 +56,24 @@ namespace kane::rendering {
 
 	void render_entity(NVGcontext *nvg, entity &ent) {
 		auto anim_i = ent.anims.find(ent.current_anim);
-		if (anim_i == ent.anims.end()) return;
+		if (anim_i == ent.anims.end()) {
+			sl::warn("Assigned animation ({}) doesn't appear to be valid.", ent.current_anim);
+			return;
+		}
 		if (anim_i->second.sheet_img == 0) {
 			auto sheet_i = assets::sprite_sheet_gl_handles.find(ent.current_anim);
-			if (sheet_i == assets::sprite_sheet_gl_handles.end()) return;
+			if (sheet_i == assets::sprite_sheet_gl_handles.end()) {
+				sl::warn("Unable to find sprite for current animation: ", ent.current_anim);
+				return;
+			}
 			glm::ivec2 sheet_size;
 			nvgImageSize(nvg, sheet_i->second, &sheet_size.x, &sheet_size.y);
+			sl::debug("Linking sprite sheet to entity: {}, GL texture #{}. ({}, {})", ent.current_anim, sheet_i->second, sheet_size.x, sheet_size.y);
 			ent.anim_sheet_assign_cb(ent.current_anim, sheet_i->second, sheet_size);
+			if (anim_i->second.sheet_img == 0) {
+				sl::warn("Sprite sheet proposal wasn't absorbed: {}, GL texture #{}.", ent.current_anim, sheet_i->second);
+				return;
+			}
 		}
 		if (ent.last_rendered_anim != ent.current_anim) set_animation_frame(anim_i->second, 0);
 		anim_i->second.sheet_off = {
@@ -108,19 +119,19 @@ namespace kane::rendering {
 		// auto scene_view_size = glm::fvec2(framebuffer_size) / camera::scale;
 		// sl::info("{} <-> {}", camera::pos.x - (scene_view_size.x * .5f), camera::pos.x + (scene_view_size.x * .5f));
 		{
-			auto img_glid = assets::sprite_sheet_gl_handles["bg-city-2-far"];
+			auto img_glid = assets::sprite_sheet_gl_handles["bg_city_2_far"];
 			int img_w, img_h;
 			nvgImageSize(nvg, img_glid, &img_w, &img_h);
 			for (int i = -8; i < 8; i++) render_bg_asset(nvg, img_w * i, -img_h, img_w, img_h, .1f, img_glid, framebuffer_size);
 		}
 		{
-			auto img_glid = assets::sprite_sheet_gl_handles["bg-city-2-med"];
+			auto img_glid = assets::sprite_sheet_gl_handles["bg_city_2_med"];
 			int img_w, img_h;
 			nvgImageSize(nvg, img_glid, &img_w, &img_h);
 			for (int i = -12; i < 12; i++) render_bg_asset(nvg, img_w * i, -img_h, img_w, img_h, .35f, img_glid, framebuffer_size);
 		}
 		{
-			auto img_glid = assets::sprite_sheet_gl_handles["bg-city-2-close"];
+			auto img_glid = assets::sprite_sheet_gl_handles["bg_city_2_close"];
 			int img_w, img_h;
 			nvgImageSize(nvg, img_glid, &img_w, &img_h);
 			for (int i = -16; i < 16; i++) render_bg_asset(nvg, img_w * i, -img_h, img_w, img_h, .8f, img_glid, framebuffer_size);

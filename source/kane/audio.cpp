@@ -3,6 +3,8 @@
 
 #include <SFML/Audio.hpp>
 
+#include <emico.h>
+
 #include <memory>
 
 namespace kane::audio {
@@ -12,7 +14,8 @@ namespace kane::audio {
 
 void kane::audio::initialize() {
 	bg_music_buf = std::make_unique<sf::SoundBuffer>();
-	if (!bg_music_buf->loadFromFile("assets/music/low-fog.ogg")) {
+	auto &emb = emico::assets["music.low_fog.ogg"];
+	if (!bg_music_buf->loadFromMemory(emb.first, emb.second)) {
 		sl::warn("Unable to load music.");
 		bg_music_buf.release();
 		return;

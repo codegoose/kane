@@ -1,18 +1,19 @@
 #include <kane/entity_shadow.h>
+#include <kane/logging.h>
 
 kane::pc::shadow_entity::shadow_entity() {
-	current_anim = "shadow-idle";
-	anims["shadow-idle"];
-	anims["shadow-run"];
-	anims["shadow-charge"];
-	anims["shadow-damage"];
-	anims["shadow-attack-1"];
-	anims["shadow-attack-2"];
+	current_anim = "shadow_idle";
+	anims["shadow_idle"];
+	anims["shadow_run"];
+	anims["shadow_charge"];
+	anims["shadow_damage"];
+	anims["shadow_attack_1"];
+	anims["shadow_attack_2"];
 }
 
 void kane::pc::shadow_entity::anim_sheet_assign_cb(std::string anim_name, int sprite_sheet_gl_handle, glm::ivec2 sheet_size) {
 	auto &anim = anims[anim_name];
-	if (anim_name == "shadow-idle") {
+	if (anim_name == "shadow_idle") {
 		anim.sheet_img = sprite_sheet_gl_handle;
 		anim.sheet_size = sheet_size;
 		anim.tile_size = {
@@ -27,7 +28,7 @@ void kane::pc::shadow_entity::anim_sheet_assign_cb(std::string anim_name, int sp
 		anim.frame_xy_list = {
 			{ 0, 0 }
 		};
-	} else if (anim_name == "shadow-run") {
+	} else if (anim_name == "shadow_run") {
 		anim.sheet_img = sprite_sheet_gl_handle;
 		anim.sheet_size = sheet_size;
 		anim.tile_size = {
@@ -47,7 +48,7 @@ void kane::pc::shadow_entity::anim_sheet_assign_cb(std::string anim_name, int sp
 			{ 0, 4 },
 			{ 0, 5 }
 		};
-	} else if (anim_name == "shadow-charge") {
+	} else if (anim_name == "shadow_charge") {
 		anim.sheet_img = sprite_sheet_gl_handle;
 		anim.sheet_size = sheet_size;
 		anim.tile_size = {
@@ -69,7 +70,7 @@ void kane::pc::shadow_entity::anim_sheet_assign_cb(std::string anim_name, int sp
 			{ 0, 6 },
 			{ 0, 7 }
 		};
-	} else if (anim_name == "shadow-damage") {
+	} else if (anim_name == "shadow_damage") {
 		anim.sheet_img = sprite_sheet_gl_handle;
 		anim.sheet_size = sheet_size;
 		anim.tile_size = {
@@ -92,7 +93,7 @@ void kane::pc::shadow_entity::anim_sheet_assign_cb(std::string anim_name, int sp
 			{ 0, 7 },
 			{ 0, 8 }
 		};
-	} else if (anim_name == "shadow-attack-1") {
+	} else if (anim_name == "shadow_attack_1") {
 		anim.sheet_img = sprite_sheet_gl_handle;
 		anim.sheet_size = sheet_size;
 		anim.tile_size = {
@@ -122,8 +123,8 @@ void kane::pc::shadow_entity::anim_sheet_assign_cb(std::string anim_name, int sp
 			{ 0, 21 }
 		};
 		anim.loop = false;
-		anim.next_anim = "shadow-idle";
-	} else if (anim_name == "shadow-attack-2") {
+		anim.next_anim = "shadow_idle";
+	} else if (anim_name == "shadow_attack_2") {
 		anim.sheet_img = sprite_sheet_gl_handle;
 		anim.sheet_size = sheet_size;
 		anim.tile_size = {
@@ -146,6 +147,6 @@ void kane::pc::shadow_entity::anim_sheet_assign_cb(std::string anim_name, int sp
 			{ 0, 9 }
 		};
 		anim.loop = false;
-		anim.next_anim = "shadow-idle";
+		anim.next_anim = "shadow_idle";
 	}
 }

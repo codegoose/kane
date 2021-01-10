@@ -29,13 +29,13 @@ namespace kane::lp {
 		merchant->update = [](double secs) {
 			static float tmp = 0;
 			tmp += secs;
-			if (tmp < 3.f) merchant->current_anim = "merchant-idle";
+			if (tmp < 3.f) merchant->current_anim = "merchant_idle";
 			else if (tmp < 6.f) {
-				merchant->current_anim = "merchant-walk";
+				merchant->current_anim = "merchant_walk";
 				merchant->pos.x += (merchant->flipped ? -20.f : 20.f) * secs;
 			} else {
 				tmp = 0;
-				merchant->current_anim = "merchant-idle";
+				merchant->current_anim = "merchant_idle";
 			}
 			if (merchant->pos.x > 30) merchant->flipped = true;
 			if (merchant->pos.x < -30) merchant->flipped = false;
@@ -45,33 +45,33 @@ namespace kane::lp {
 	void become_shadow_entity() {
 		entity = std::make_unique<pc::shadow_entity>();
 		entity->update = [](double secs) {
-			if (entity->current_anim == "shadow-attack-1" || entity->current_anim == "shadow-attack-2") {
+			if (entity->current_anim == "shadow_attack_1" || entity->current_anim == "shadow_attack_2") {
 				for (auto &anim : entity->anims) anim.second.alpha = 1;
 				idle_time = 0;
 				return;
 			}
 			if (input::lp_util_1) {
-				entity->current_anim = "shadow-charge";
+				entity->current_anim = "shadow_charge";
 				for (auto &anim : entity->anims) anim.second.alpha = 1;
 				idle_time = 0;
 				return;
 			}
 			if (input::lp_attack_1) {
-				entity->current_anim = "shadow-attack-2";
+				entity->current_anim = "shadow_attack_2";
 				return;
 			}
 			if (input::lp_attack_2) {
-				entity->current_anim = "shadow-attack-1";
+				entity->current_anim = "shadow_attack_1";
 				return;
 			}
 			if (input::lp_movement.x != 0) {
-				entity->current_anim = "shadow-run";
+				entity->current_anim = "shadow_run";
 				entity->flipped = input::lp_movement.x >= 0 ? false : true;
 				entity->pos.x += input::lp_movement.x * 50.f * static_cast<float>(secs);
 				idle_time = 0;
 			} else {
 				idle_time += secs;
-				if (idle_time > 1.0 / 10.0) entity->current_anim = "shadow-idle";
+				if (idle_time > 1.0 / 10.0) entity->current_anim = "shadow_idle";
 			}
 			if (idle_time > 3) for (auto &anim : entity->anims) anim.second.alpha -= .65f * secs;
 			else for (auto &anim : entity->anims) anim.second.alpha += 6.f * secs;

@@ -5,6 +5,8 @@
 #include <stb_image.h>
 #include <GL/glew.h>
 
+#include <emico.h>
+
 #include <fstream>
 #include <filesystem>
 
@@ -12,22 +14,16 @@ std::map<std::string, int> kane::assets::sprite_sheet_gl_handles;
 std::map<std::string, std::pair<glm::ivec2, std::vector<uint8_t>>> kane::assets::sprite_sheet_pixel_data;
 
 bool kane::assets::load(NVGcontext *nvg) {
-	for (auto &file : std::filesystem::directory_iterator("assets/sprites")) {
-		if (file.path().extension() != ".png") continue;
-		std::ifstream in(file.path().string().c_str(), std::ios::binary);
-		if (!in.is_open()) {
-			sl::warn("Unable to open image file: {}", file.path().string());
-			continue;
-		}
-		auto name = file.path().stem().string();
-		std::vector<char> contents((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
+	for (auto &emb : emico::assets) {
+		if (emb.first.substr(0, strlen("sprites.")) != "sprites.") continue;
 		int w, h, num_chan;
-		auto pixels = stbi_load_from_memory(reinterpret_cast<const stbi_uc *>(contents.data()), contents.size(), &w, &h, &num_chan, 4);
-		if (!pixels) {
-			sl::warn("Unable to process file data as image: {}", file.path().string());
-			continue;
-		}
+		auto pixels = stbi_load_from_memory(reinterpret_cast<const stbi_uc *>(emb.second.first), emb.second.second, &w, &h, &num_chan, 4);
+		assert(pixels);
 		int texture = 0;
+		auto name = emb.first;
+		name = name.substr(strlen("sprites."));
+		name = name.substr(0, name.size() - strlen(".png"));
+		sl::debug("Referencing embedded asset as sprite: {} -> {}", emb.first, name);
 		{
 			auto &convenient_img_copy = sprite_sheet_pixel_data[name];
 			convenient_img_copy.first = { w, h };
@@ -37,7 +33,7 @@ bool kane::assets::load(NVGcontext *nvg) {
 			stbi_image_free(pixels);
 		}
 		if (!texture) {
-			sl::warn("Unable to create texture from image pixels: {}", file.path().string());
+			sl::warn("Unable to create texture from image pixels: {}", emb.first);
 			continue;
 		}
 		sprite_sheet_gl_handles[name] = texture;
