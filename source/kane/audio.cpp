@@ -5,29 +5,88 @@
 
 #include <emico.h>
 
+#include <map>
+#include <array>
 #include <memory>
 
 namespace kane::audio {
-	std::unique_ptr<sf::SoundBuffer> bg_music_buf;
-	std::unique_ptr<sf::Sound> bg_music;
+	std::map<std::string, std::shared_ptr<sf::SoundBuffer>> sound_buffers;
+	std::map<std::string, std::shared_ptr<sf::Music>> music_instances;
+	std::array<std::shared_ptr<sf::Sound>, 200> active_sounds;
 }
 
 void kane::audio::initialize() {
-	bg_music_buf = std::make_unique<sf::SoundBuffer>();
-	auto &emb = emico::assets["music.low_fog.ogg"];
-	if (!bg_music_buf->loadFromMemory(emb.first, emb.second)) {
-		sl::warn("Unable to load music.");
-		bg_music_buf.release();
-		return;
+	for (auto &emb : emico::assets) {
+		if (emb.first.substr(0, 7) != "sounds.") continue;
+		auto name = emb.first;
+		name = name.substr(7, name.size() - 7 - 4);
+		sl::debug("Referencing embedded asset as sound buffer: {} -> {}", emb.first, name);
+		auto buffer = std::make_shared<sf::SoundBuffer>();
+		if (!buffer->loadFromMemory(emb.second.first, emb.second.second)) {
+			sl::warn("Unable to process embedded asset as sound: {}", emb.first);
+			continue;
+		}
+		sound_buffers[name] = buffer;
 	}
-	bg_music = std::make_unique<sf::Sound>();
-	bg_music->setBuffer(*bg_music_buf);
-	bg_music->setVolume(40);
-	bg_music->setLoop(true);
-	bg_music->play();
+	for (auto &emb : emico::assets) {
+		if (emb.first.substr(0, 6) != "music.") continue;
+		auto name = emb.first;
+		name = name.substr(6, name.size() - 6 - 4);
+		sl::debug("Referencing embedded asset as music stream: {} -> {}", emb.first, name);
+		auto music = std::make_shared<sf::Music>();
+		if (!music->openFromMemory(emb.second.first, emb.second.second)) {
+			sl::warn("Unable to process embedded asset as music stream: {}", emb.first);
+			continue;
+		}
+		music_instances[name] = music;
+	}
 }
 
 void kane::audio::shutdown() {
-	bg_music.release();
-	bg_music_buf.release();
+	for (auto &sound_slot : active_sounds) {
+		if (!sound_slot) continue;
+		sound_slot->stop();
+		sound_slot.reset();
+	}
+	sound_buffers.clear();
+	music_instances.clear();
+}
+
+int kane::audio::play_sound(const std::string_view &name, float volume, bool looping) {
+	auto buffer_i = sound_buffers.find(name.data());
+	if (buffer_i == sound_buffers.end()) {
+		sl::warn("Instructed to play sound that doesn't exist: {}", name);
+		return -1;
+	}
+	for (int i = 0; i < active_sounds.size(); i++) {
+		auto &sound_slot = active_sounds[i];
+		if (sound_slot) continue;
+		sound_slot = std::make_shared<sf::Sound>(*buffer_i->second.get());
+		sound_slot->play();
+		sound_slot->setVolume(volume);
+		sound_slot->setLoop(looping);
+		sl::debug("Playing sound: {} (Slot #{})", name, i);
+		return i;
+	}
+	sl::warn("Unable to play sound: {} (Too many sounds playing.)", name);
+	return -1;
+}
+
+void kane::audio::play_music(const std::string_view &name) {
+	if (music_instances.find(name.data()) == music_instances.end()) {
+		sl::warn("Instructed to play music that doesn't exist: {}");
+		return;
+	}
+	for (auto &music : music_instances) {
+		if (music.first != name) {
+			if (music.second->getStatus() == sf::Music::Playing) {
+				sl::warn("Stopping music: {}", name);
+				music.second->stop();
+			}
+			continue;
+		}
+		if (music.second->getStatus() == sf::Music::Playing) sl::warn("Instructed to play music that's already playing: {}", name);
+		else sl::debug("Playing music: {}", name);
+		music.second->play();
+	}
 }
