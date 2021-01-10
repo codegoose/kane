@@ -5,6 +5,7 @@
 			"includePath": [
 				"${workspaceFolder}/third-party/include",
 				"${workspaceFolder}/include",
+				"${workspaceFolder}/emico/include",
 				"${default}"
 			],
 			"defines": []

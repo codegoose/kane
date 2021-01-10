@@ -19,6 +19,9 @@ add_executable(
 	source/kane/audio.cpp
 )
 
+add_subdirectory(emico)
+target_include_directories(${PROJECT_NAME} PUBLIC include emico/include)
+
 add_library(
 	imgui
 	STATIC
@@ -49,4 +52,4 @@ target_include_directories(nanovg PUBLIC third-party/include)
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 target_include_directories(${PROJECT_NAME} PUBLIC include third-party/include)
-target_link_libraries(${PROJECT_NAME} PUBLIC nanovg imgui sfml-audio glfw3 fmt glew32 opengl32)
+target_link_libraries(${PROJECT_NAME} PUBLIC emico nanovg imgui sfml-audio glfw3 fmt glew32 opengl32)

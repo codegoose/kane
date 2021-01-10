@@ -25,6 +25,8 @@
 #include <kane/local_player.h>
 #include <kane/audio.h>
 
+#include <emico.h>
+
 namespace kane {
 	void run(GLFWwindow *window, NVGcontext *nvg) {
 		if (!assets::load(nvg)) return;
@@ -70,6 +72,7 @@ int main() {
 		combined_sink->set_level(sl::level::debug);
 		sl::set_default_logger(combined_sink);
 	}
+	for (auto &entry : emico::assets) sl::debug("{} @ {} ({} bytes)", entry.first, entry.second.first, entry.second.second);
 	kane::settings::load();
 	glfwSetErrorCallback([](int code, const char *what) { sl::error("{}.", what); });
 	if (glfwInit() == GLFW_TRUE) {
