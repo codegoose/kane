@@ -4,6 +4,7 @@
 #include <kane/timing.h>
 #include <kane/entity_shadow.h>
 #include <kane/entity_merchant.h>
+#include <kane/entity_mud_summoner.h>
 
 #include <glm/glm.hpp>
 
@@ -13,6 +14,7 @@ namespace kane::lp {
 
 	double idle_time = 0;
 	pc::merchant_entity *merchant = 0;
+	pc::mud_summoner_entity *summoner = 0;
 
 	void update(double secs) {
 		
@@ -21,6 +23,7 @@ namespace kane::lp {
 	void update_varying(double secs) {
 		if (entity && entity->update) entity->update(secs);
 		if (merchant && merchant->update) merchant->update(secs);
+		if (summoner && summoner->update) summoner->update(secs);
 	}
 
 	void make_random_merchant() {
@@ -39,6 +42,37 @@ namespace kane::lp {
 			}
 			if (merchant->pos.x > 30) merchant->flipped = true;
 			if (merchant->pos.x < -30) merchant->flipped = false;
+		};
+	}
+
+	void make_random_mud_summoner() {
+		summoner = new pc::mud_summoner_entity;
+		summoner->pos.x = -100;
+		summoner->update = [](double secs) {
+			static bool summoning = false;
+			static float since_last_summon = 0.f;
+			static float since_last_misc = 0.f;
+			if (summoning && summoner->current_anim == "summoner_idle") {
+				summoning = false;
+				since_last_summon = 0;
+			}
+			if (summoner->current_anim != "mud_summoner_summon") since_last_summon += secs;
+			auto distance = glm::distance(summoner->pos, lp::entity->pos);
+			if (distance < 200.f) {
+				if (summoner->pos.x > lp::entity->pos.x) summoner->flipped = false;
+				if (summoner->pos.x < lp::entity->pos.x) summoner->flipped = true;
+				summoner->current_anim = "mud_summoner_run";
+				summoner->pos.x += (summoner->flipped ? -40.f : 40.f) * secs;
+			} else {
+				if (since_last_summon >= 4.f) {
+					summoner->current_anim = "mud_summoner_summon";
+					summoning = true;
+					since_last_summon = 0;
+				} else if (!summoning) {
+					summoner->current_anim = "mud_summoner_idle";
+					since_last_misc += secs;
+				}
+			}
 		};
 	}
 
@@ -88,6 +122,7 @@ void kane::lp::initialize() {
 	}
 	become_shadow_entity();
 	make_random_merchant();
+	make_random_mud_summoner();
 }
 
 void kane::lp::shutdown() {
