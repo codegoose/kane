@@ -150,7 +150,7 @@ bool kane::rendering::initialize(NVGcontext *nvg) {
 
 void kane::rendering::render(NVGcontext *nvg, glm::ivec2 framebuffer_size) {
 	camera::pos = lp::entity->pos;
-	camera::scale = glm::round(glm::max(1.f, framebuffer_size.y / 300.f));
+	camera::scale = glm::round(glm::max(1.f, framebuffer_size.x / 600.f));
 	render_bg_parallax(nvg, framebuffer_size);
 	for (auto ent : entities) {
 		nvgResetTransform(nvg);
