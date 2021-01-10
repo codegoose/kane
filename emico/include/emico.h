@@ -6,5 +6,5 @@
 
 namespace emico {
 
-	extern const std::map<std::string, std::pair<const void *, unsigned int>> assets;
+	extern std::map<std::string, std::pair<const void *, unsigned int>> assets;
 }

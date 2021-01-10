@@ -26,7 +26,7 @@ def write_primary_source_file(symbols: list):
 	psrc.write('#include <incbin.h>\n')
 	for symbol in symbols:
 		psrc.write('INCBIN_EXTERN(%s%s);\n' % ('_emico_', symbol[0]))
-	psrc.write('const std::map<std::string, std::pair<const void *, unsigned int>> emico::assets {\n')
+	psrc.write('std::map<std::string, std::pair<const void *, unsigned int>> emico::assets {\n')
 	psrc.write(
 		',\n'.join(
 			['\t{ "%s", { g_emico_%s_data, g_emico_%s_size } }' % (
