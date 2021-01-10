@@ -63,6 +63,14 @@ namespace kane {
 	}
 }
 
+static void center_window_on_primary(GLFWwindow *window) {
+	int x, y, w, h;
+	glfwGetMonitorWorkarea(glfwGetPrimaryMonitor(), &x, &y, &w, &h);
+	int ww, wh;
+	glfwGetWindowSize(window, &ww, &wh);
+	glfwSetWindowPos(window, x + (w / 2) - (ww / 2), y + (h / 2) - (wh / 2));
+}
+
 int main() {
 	{
 		std::vector<sl::sink_ptr> sinks;
@@ -83,6 +91,7 @@ int main() {
 			if (glewInit() == GLEW_OK) {
 				sl::debug("OpenGL {} via {}.", glGetString(GL_VERSION), glGetString(GL_RENDERER));
 				if (auto nvg = nvgCreateGL3(NVG_ANTIALIAS | NVG_STENCIL_STROKES); nvg) {
+					center_window_on_primary(window);
 					kane::run(window, nvg);
 					nvgDeleteGL3(nvg);
 				} else sl::error("Unable to initialize NanoVG.");
