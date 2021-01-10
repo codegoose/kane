@@ -32,10 +32,10 @@ namespace kane {
 		if (!assets::load(nvg)) return;
 		cursor::initialize(window);
 		if (rendering::initialize(nvg)) {
-			timing::reset();
 			input::initialize(window);
-			lp::initialize();
 			audio::initialize();
+			lp::initialize();
+			timing::reset();
 			glfwShowWindow(window);
 			while (!glfwWindowShouldClose(window)) {
 				glfwPollEvents();
@@ -53,8 +53,8 @@ namespace kane {
 				glfwSwapInterval(1);
 			}
 			glfwHideWindow(window);
-			audio::shutdown();
 			lp::shutdown();
+			audio::shutdown();
 			input::shutdown();
 			rendering::shutdown(nvg);
 		} else sl::error("Unable to initialize the rendering subsystem.");
