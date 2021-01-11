@@ -1,71 +1,149 @@
 #include <kane/game.h>
 #include <kane/audio.h>
 #include <kane/timing.h>
+#include <kane/traits.h>
 #include <kane/local_player.h>
 #include <kane/entity_merchant.h>
 #include <kane/entity_mud_summoner.h>
+#include <kane/logging.h>
 
 #include <glm/glm.hpp>
 
+#include <memory>
+
 namespace kane::game {
 
-	pc::merchant_entity *merchant = 0;
-	pc::mud_summoner_entity *summoner = 0;
+	std::vector<std::shared_ptr<rendering::entity>> npcs;
 
-	void update_varying(double secs) {
-		if (lp::entity && lp::entity->update) lp::entity->update(secs);
-		if (merchant && merchant->update) merchant->update(secs);
-		if (summoner && summoner->update) summoner->update(secs);
-	}
+	struct merchant_instance : pc::merchant_entity, traits::mortal, signals::emitter {
 
-	void make_random_merchant() {
-		merchant = new pc::merchant_entity;
-		merchant->pos.x = 100;
-		merchant->update = [](double secs) {
-			static float tmp = 0;
-			tmp += secs;
-			if (tmp < 3.f) merchant->current_anim = "merchant_idle";
-			else if (tmp < 6.f) {
-				merchant->current_anim = "merchant_walk";
-				merchant->pos.x += (merchant->flipped ? -20.f : 20.f) * secs;
-			} else {
-				tmp = 0;
-				merchant->current_anim = "merchant_idle";
+		float state_timing = 0;
+		bool running_from_player = false;
+
+		merchant_instance() {
+			signalling_id = "merchant_npc";
+			update = std::bind(&merchant_instance::update_cb, this, std::placeholders::_1);
+		}
+
+		virtual ~merchant_instance() {
+
+		}
+
+		void receive_damage(const signals::source &src, int amount) override {
+			if (src.id == signalling_id) return;
+		}
+
+		void receive_damage_zone_rect(const signals::source &src, damage_zone_rect_signal info) override {
+			if (src.id == signalling_id) return;
+			if (!(pos.x >= info.min.x && pos.x <= info.max.x && pos.y >= info.min.y && pos.y <= info.max.y)) return;
+			running_from_player = true;
+			state_timing = 3.f;
+		}
+
+		void receive_damage_zone_radius(const signals::source &src, damage_zone_radius_signal info) override {
+			if (src.id == signalling_id) return;
+			if (glm::distance(pos, info.pos) > info.radius) return;
+			running_from_player = true;
+			state_timing = 3.f;
+		}
+
+		void update_cb(double secs) {
+			if (running_from_player) {
+				if (lp::entity) {
+					if (state_timing > 0) {
+						flipped = pos.x > lp::entity->pos.x ? false : true;
+						current_anim = "merchant_walk";
+						pos.x += (flipped ? -40.f : 40.f) * secs;
+						state_timing -= secs;
+						return;
+					}
+				}
+				running_from_player = false;
 			}
-			if (merchant->pos.x > 30) merchant->flipped = true;
-			if (merchant->pos.x < -30) merchant->flipped = false;
-		};
-	}
+			state_timing += secs;
+			if (state_timing < 3.f) current_anim = "merchant_idle";
+			else if (state_timing < 6.f) {
+				current_anim = "merchant_walk";
+				pos.x += (flipped ? -20.f : 20.f) * secs;
+			} else {
+				state_timing = 0;
+				current_anim = "merchant_idle";
+			}
+			if (pos.x > 30) flipped = true;
+			if (pos.x < -30) flipped = false;
+		}
+	};
 
-	void make_random_mud_summoner() {
-		summoner = new pc::mud_summoner_entity;
-		summoner->pos.x = -100;
-		summoner->update = [](double secs) {
-			static bool summoning = false;
-			static float since_last_summon = 0.f;
-			static float since_last_misc = 0.f;
-			if (summoning && summoner->current_anim == "summoner_idle") {
+	struct mud_summoner_instance : pc::mud_summoner_entity, traits::mortal, signals::emitter {
+
+		bool summoning = false;
+		float since_last_summon = 0;
+		float since_last_misc = 0;
+
+		mud_summoner_instance() {
+			signalling_id = "mud_summoner_npc";
+			update = std::bind(&mud_summoner_instance::update_cb, this, std::placeholders::_1);
+		}
+
+		virtual ~mud_summoner_instance() {
+
+		}
+
+		void receive_damage(const signals::source &src, int amount) override {
+			if (src.id == signalling_id) return;
+		}
+
+		void receive_damage_zone_rect(const signals::source &src, damage_zone_rect_signal info) override {
+
+		}
+
+		void receive_damage_zone_radius(const signals::source &src, damage_zone_radius_signal info) override {
+
+		}
+
+		void update_cb(double secs) {
+			if (summoning && current_anim == "summoner_idle") {
 				summoning = false;
 				since_last_summon = 0;
 			}
-			if (summoner->current_anim != "mud_summoner_summon") since_last_summon += secs;
-			auto distance = glm::distance(summoner->pos, lp::entity->pos);
+			if (current_anim != "mud_summoner_summon") since_last_summon += secs;
+			auto distance = glm::distance(pos, lp::entity->pos);
 			if (distance < 200.f) {
-				if (summoner->pos.x > lp::entity->pos.x) summoner->flipped = false;
-				if (summoner->pos.x < lp::entity->pos.x) summoner->flipped = true;
-				summoner->current_anim = "mud_summoner_run";
-				summoner->pos.x += (summoner->flipped ? -40.f : 40.f) * secs;
+				if (pos.x > lp::entity->pos.x) flipped = false;
+				if (pos.x < lp::entity->pos.x) flipped = true;
+				current_anim = "mud_summoner_run";
+				pos.x += (flipped ? -40.f : 40.f) * secs;
 			} else {
 				if (since_last_summon >= 4.f) {
-					summoner->current_anim = "mud_summoner_summon";
+					current_anim = "mud_summoner_summon";
 					summoning = true;
 					since_last_summon = 0;
 				} else if (!summoning) {
-					summoner->current_anim = "mud_summoner_idle";
+					current_anim = "mud_summoner_idle";
 					since_last_misc += secs;
 				}
 			}
-		};
+		}
+	};
+
+	void update_varying(double secs) {
+		if (lp::entity && lp::entity->update) lp::entity->update(secs);
+		for (auto &npc : npcs) {
+			if (!npc || !npc->update) continue;
+			npc->update(secs);
+		}
+	}
+
+	void make_random_merchant() {
+		auto merchant = std::make_shared<merchant_instance>();
+		merchant->pos.x = -100 + rand() % 200;
+		npcs.push_back(merchant);
+	}
+
+	void make_random_mud_summoner() {
+		auto summoner = std::make_shared<mud_summoner_instance>();
+		summoner->pos.x = -50 + rand() % 100;
+		npcs.push_back(summoner);
 	}
 }
 
@@ -80,6 +158,5 @@ void kane::game::initialize() {
 }
 
 void kane::game::shutdown() {
-	delete merchant;
-	delete summoner;
+	npcs.clear();
 }
