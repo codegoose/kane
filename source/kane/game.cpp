@@ -5,6 +5,7 @@
 #include <kane/local_player.h>
 #include <kane/entity_merchant.h>
 #include <kane/entity_mud_summoner.h>
+#include <kane/entity_mud_minion.h>
 #include <kane/logging.h>
 
 #include <glm/glm.hpp>
@@ -71,6 +72,47 @@ namespace kane::game {
 			}
 			if (pos.x > 30) flipped = true;
 			if (pos.x < -30) flipped = false;
+		}
+	};
+
+	struct mud_minion_instance : pc::mud_minion_entity, traits::mortal, signals::emitter {
+
+		float follow_variance = -10 + rand() % 10;
+
+		mud_minion_instance() {
+			signalling_id = "mud_minion_npc";
+			update = std::bind(&mud_minion_instance::update_cb, this, std::placeholders::_1);
+		}
+
+		virtual ~mud_minion_instance() {
+
+		}
+
+		void receive_damage(const signals::source &src, int amount) override {
+			if (src.id == signalling_id) return;
+		}
+
+		void receive_damage_zone_rect(const signals::source &src, damage_zone_rect_signal info) override {
+			if (src.id == signalling_id) return;
+			if (!(pos.x >= info.min.x && pos.x <= info.max.x && pos.y >= info.min.y && pos.y <= info.max.y)) return;
+			current_anim = "mud_minion_damage";
+		}
+
+		void receive_damage_zone_radius(const signals::source &src, damage_zone_radius_signal info) override {
+			if (src.id == signalling_id) return;
+			if (glm::distance(pos, info.pos) > info.radius) return;
+			current_anim = "mud_minion_damage";
+		}
+
+		void update_cb(double secs) {
+			if (current_anim == "mud_minion_damage") return;
+			if (current_anim == "mud_minion_attack") return;
+			current_anim = "mud_minion_move";
+			auto distance = glm::distance(pos, lp::entity->pos);
+			if (distance > 20.f + follow_variance) {
+				flipped = pos.x > lp::entity->pos.x ? true : false;
+				pos.x += (flipped ? -40.f : 40.f) * secs;
+			} else current_anim = "mud_minion_attack";
 		}
 	};
 
@@ -145,6 +187,12 @@ namespace kane::game {
 		summoner->pos.x = -50 + rand() % 100;
 		npcs.push_back(summoner);
 	}
+
+	void make_random_mud_minion() {
+		auto minion = std::make_shared<mud_minion_instance>();
+		minion->pos.x = -600 + rand() % 1200;
+		npcs.push_back(minion);
+	}
 }
 
 void kane::game::initialize() {
@@ -154,6 +202,12 @@ void kane::game::initialize() {
 	}
 	make_random_merchant();
 	make_random_mud_summoner();
+	make_random_mud_minion();
+	make_random_mud_minion();
+	make_random_mud_minion();
+	make_random_mud_minion();
+	make_random_mud_minion();
+	make_random_mud_minion();
 	audio::play_music("low_fog");
 }
 
