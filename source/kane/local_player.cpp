@@ -5,6 +5,7 @@
 #include <kane/entity_shadow.h>
 #include <kane/entity_merchant.h>
 #include <kane/entity_mud_summoner.h>
+#include <kane/audio.h>
 
 #include <glm/glm.hpp>
 
@@ -123,6 +124,7 @@ void kane::lp::initialize() {
 	become_shadow_entity();
 	make_random_merchant();
 	make_random_mud_summoner();
+	audio::play_music("low_fog");
 }
 
 void kane::lp::shutdown() {
