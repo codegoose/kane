@@ -7,6 +7,10 @@ kane::pc::mud_summoner_entity::mud_summoner_entity() {
 	anims["mud_summoner_summon"];
 }
 
+kane::pc::mud_summoner_entity::~mud_summoner_entity() {
+	
+}
+
 void kane::pc::mud_summoner_entity::anim_sheet_assign_cb(std::string anim_name, int sprite_sheet_gl_handle, glm::ivec2 sheet_size) {
 	auto &anim = anims[anim_name];
 	if (anim_name == "mud_summoner_idle") {

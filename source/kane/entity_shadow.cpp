@@ -14,6 +14,10 @@ kane::pc::shadow_entity::shadow_entity() {
 	anims["shadow_attack_2"];
 }
 
+kane::pc::shadow_entity::~shadow_entity() {
+	
+}
+
 void kane::pc::shadow_entity::anim_sheet_assign_cb(std::string anim_name, int sprite_sheet_gl_handle, glm::ivec2 sheet_size) {
 	auto &anim = anims[anim_name];
 	if (anim_name == "shadow_idle") {

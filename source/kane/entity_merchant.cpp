@@ -6,6 +6,10 @@ kane::pc::merchant_entity::merchant_entity() {
 	anims["merchant_walk"];
 }
 
+kane::pc::merchant_entity::~merchant_entity() {
+	
+}
+
 void kane::pc::merchant_entity::anim_sheet_assign_cb(std::string anim_name, int sprite_sheet_gl_handle, glm::ivec2 sheet_size) {
 	auto &anim = anims[anim_name];
 	if (anim_name == "merchant_idle") {
