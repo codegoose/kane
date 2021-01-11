@@ -153,11 +153,16 @@ void kane::pc::shadow_entity::anim_sheet_assign_cb(std::string anim_name, int sp
 }
 
 void kane::pc::shadow_entity::anim_frame_cb(int frame) {
-	if (current_anim == "shadow_idle") return;
 	if (current_anim == "shadow_attack_1") {
 		switch (frame) {
-			case 0: audio::play_sound("electric_impact_long_1"); break;
-			case 8: audio::play_sound("electric_short_1"); break;
+			case 0: audio::play_sound("electric_impact_long_1", 50); break;
+			case 8: audio::play_sound("electric_short_1", 80); break;
 		}
+	}
+	if (current_anim == "shadow_charge") {
+		if (sound_slot_charging == -1) sound_slot_charging = audio::play_sound("electric_2_loop", 30, true);
+	} else if (sound_slot_charging >= 0) {
+		audio::stop_sound(sound_slot_charging);
+		sound_slot_charging = -1;
 	}
 }
