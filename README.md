@@ -6,7 +6,7 @@ This is a work-in-progress 2D sidescrolling strategy and resource management gam
  <img width="605" height="216" src="https://github.com/codegoose/kane/blob/master/snapshots/progress-snap-20210109.gif?raw=true">
 </p>
 
-This is a short guide on how to build this software on Windows. This project isn't setup to accommodate Visual Studio build environments and works best with either GCC or Clang based environments. Fortunately it's very easy to get all of these tools setup. I'll walk you through it:
+This is a short guide on how to build this software on Windows. You'll need MSYS2. I'll walk you through it:
 
 ## Building
 
