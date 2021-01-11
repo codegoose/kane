@@ -47,3 +47,7 @@ void kane::pc::merchant_entity::anim_sheet_assign_cb(std::string anim_name, int 
 		};
 	}
 }
+
+void kane::pc::merchant_entity::anim_frame_cb(int frame) {
+
+}

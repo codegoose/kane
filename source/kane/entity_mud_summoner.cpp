@@ -72,3 +72,7 @@ void kane::pc::mud_summoner_entity::anim_sheet_assign_cb(std::string anim_name, 
 		anim.next_anim = "mud_summoner_idle";
 	}
 }
+
+void kane::pc::mud_summoner_entity::anim_frame_cb(int frame) {
+
+}

@@ -16,6 +16,7 @@ namespace kane::rendering {
 	void set_animation_frame(animation &anim, int frame) {
 		anim.steps_left_to_wait = anim.num_wait_steps;
 		anim.current_frame = frame;
+		ent.anim_frame_cb(frame);
 	}
 
 	void step_animation(entity &ent, animation &anim) {
