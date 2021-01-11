@@ -1,7 +1,7 @@
 #include <kane/entity_mud_minion.h>
 
 kane::pc::mud_minion_entity::mud_minion_entity() {
-	current_anim = "mud_minion_damage";
+	current_anim = "mud_minion_move";
 	anims["mud_minion_move"];
 	anims["mud_minion_attack"];
 	anims["mud_minion_damage"];
