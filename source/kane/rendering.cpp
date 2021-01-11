@@ -13,14 +13,19 @@ namespace kane::rendering {
 
 	std::vector<entity *> entities;
 
-	void set_animation_frame(animation &anim, int frame) {
+	void set_animation_frame(entity &ent, animation &anim, int frame) {
 		anim.steps_left_to_wait = anim.num_wait_steps;
 		anim.current_frame = frame;
+		ent.last_stepped_animation = ent.current_anim;
 		ent.anim_frame_cb(frame);
 	}
 
 	void step_animation(entity &ent, animation &anim) {
 		anim.steps_left_to_wait--;
+		if (ent.last_stepped_animation != ent.current_anim) {
+			sl::warn("Swapping animation: {} -> {}", ent.last_stepped_animation, ent.current_anim);
+			set_animation_frame(ent, anim, 0);
+		}
 		if (anim.steps_left_to_wait > 0) return;
 		anim.current_frame++;
 		if (anim.current_frame >= anim.frame_xy_list.size()) {
@@ -29,12 +34,12 @@ namespace kane::rendering {
 				if (anim.next_anim == "") anim.current_frame = anim.frame_xy_list.size() - 1;
 				else {
 					ent.current_anim = anim.next_anim;
-					set_animation_frame(ent.anims[ent.current_anim], 0);
+					set_animation_frame(ent, ent.anims[ent.current_anim], 0);
 					return;
 				}
 			}
 		}
-		set_animation_frame(anim, anim.current_frame);
+		set_animation_frame(ent, anim, anim.current_frame);
 	}
 
 	void render_sprite(NVGcontext *nvg, sprite &spr) {
@@ -76,7 +81,6 @@ namespace kane::rendering {
 				return;
 			}
 		}
-		if (ent.last_rendered_anim != ent.current_anim) set_animation_frame(anim_i->second, 0);
 		anim_i->second.sheet_off = {
 			anim_i->second.tile_size.x * -anim_i->second.frame_xy_list[anim_i->second.current_frame].x,
 			anim_i->second.tile_size.y * -anim_i->second.frame_xy_list[anim_i->second.current_frame].y
@@ -89,7 +93,6 @@ namespace kane::rendering {
 		nvgTransformMultiply(transform, translation);
 		nvgTransform(nvg, transform[0], transform[1], transform[2], transform[3], transform[4], transform[5]);
 		render_sprite(nvg, anim_i->second);
-		ent.last_rendered_anim = ent.current_anim;
 	}
 
 	void update_entity(entity &ent, double secs) {
