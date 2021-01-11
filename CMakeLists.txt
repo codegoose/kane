@@ -16,6 +16,7 @@ add_executable(
 	source/kane/entity_merchant.cpp
 	source/kane/entity_shadow.cpp
 	source/kane/entity_mud_summoner.cpp
+	source/kane/entity_mud_minion.cpp
 	source/kane/camera.cpp
 	source/kane/audio.cpp
 	source/kane/signals.cpp
