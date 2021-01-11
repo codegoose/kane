@@ -159,6 +159,11 @@ void kane::pc::shadow_entity::anim_frame_cb(int frame) {
 			case 8: audio::play_sound("electric_short_1", 80); break;
 		}
 	}
+	if (current_anim == "shadow_attack_2") {
+		switch (frame) {
+			case 2: audio::play_sound("electric_impact_3", 80); break;
+		}
+	}
 	if (current_anim == "shadow_charge") {
 		if (sound_slot_charging == -1) sound_slot_charging = audio::play_sound("electric_2_loop", 30, true);
 	} else if (sound_slot_charging >= 0) {
