@@ -23,6 +23,10 @@ namespace kane::lp {
 			update = std::bind(&shadow_instance::update_cb, this, std::placeholders::_1);
 		}
 
+		virtual ~shadow_instance() {
+
+		}
+
 		void receive_damage(const signals::source &src, int amount) override {
 			if (src.id == signalling_id) return;
 		}
