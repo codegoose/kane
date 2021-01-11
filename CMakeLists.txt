@@ -18,6 +18,9 @@ add_executable(
 	source/kane/entity_mud_summoner.cpp
 	source/kane/camera.cpp
 	source/kane/audio.cpp
+	source/kane/signals.cpp
+	source/kane/traits.cpp
+	source/kane/game.cpp
 )
 
 add_subdirectory(emico)

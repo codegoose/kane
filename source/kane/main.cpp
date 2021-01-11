@@ -24,6 +24,7 @@
 #include <kane/input.h>
 #include <kane/local_player.h>
 #include <kane/audio.h>
+#include <kane/game.h>
 
 #include <emico.h>
 
@@ -35,6 +36,7 @@ namespace kane {
 			input::initialize(window);
 			audio::initialize();
 			lp::initialize();
+			game::initialize();
 			timing::reset();
 			glfwShowWindow(window);
 			while (!glfwWindowShouldClose(window)) {
@@ -54,6 +56,7 @@ namespace kane {
 				audio::garbage_collect();
 			}
 			glfwHideWindow(window);
+			game::shutdown();
 			lp::shutdown();
 			audio::shutdown();
 			input::shutdown();

@@ -1,6 +1,7 @@
 #include <kane/entity_shadow.h>
 #include <kane/logging.h>
 #include <kane/audio.h>
+#include <kane/signals.h>
 
 kane::pc::shadow_entity::shadow_entity() {
 	current_anim = "shadow_idle";
@@ -155,13 +156,21 @@ void kane::pc::shadow_entity::anim_sheet_assign_cb(std::string anim_name, int sp
 void kane::pc::shadow_entity::anim_frame_cb(int frame) {
 	if (current_anim == "shadow_attack_1") {
 		switch (frame) {
-			case 0: audio::play_sound("electric_impact_long_1", 50); break;
-			case 8: audio::play_sound("electric_short_1", 80); break;
+			case 0:
+				audio::play_sound("electric_impact_long_1", 50);
+				break;
+			case 8:
+				audio::play_sound("electric_short_1", 80);
+				emit_signal("shadow_entity_attack_1", 23);
+				break;
 		}
 	}
 	if (current_anim == "shadow_attack_2") {
 		switch (frame) {
-			case 2: audio::play_sound("electric_impact_3", 80); break;
+			case 2:
+				audio::play_sound("electric_impact_3", 80);
+				emit_signal("shadow_entity_attack_2", 23);
+				break;
 		}
 	}
 	if (current_anim == "shadow_charge") {

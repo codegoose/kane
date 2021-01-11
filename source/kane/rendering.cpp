@@ -23,7 +23,7 @@ namespace kane::rendering {
 	void step_animation(entity &ent, animation &anim) {
 		anim.steps_left_to_wait--;
 		if (ent.last_stepped_animation != ent.current_anim) {
-			sl::warn("Swapping animation: {} -> {}", ent.last_stepped_animation, ent.current_anim);
+			sl::debug("Swapping animation: {} -> {}", ent.last_stepped_animation, ent.current_anim);
 			set_animation_frame(ent, anim, 0);
 		}
 		if (anim.steps_left_to_wait > 0) return;
