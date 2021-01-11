@@ -31,7 +31,7 @@ namespace kane::rendering {
 	};
 
 	struct entity {
-		glm::vec2 pos;
+		glm::vec2 pos { 0, 0 };
 		bool flipped { false };
 		std::map<std::string, animation> anims;
 		std::map<std::string, std::string> anim_sheet_names;
