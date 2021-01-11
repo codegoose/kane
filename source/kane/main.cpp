@@ -51,6 +51,7 @@ namespace kane {
 				nvgEndFrame(nvg);
 				glfwSwapBuffers(window);
 				glfwSwapInterval(1);
+				audio::garbage_collect();
 			}
 			glfwHideWindow(window);
 			lp::shutdown();

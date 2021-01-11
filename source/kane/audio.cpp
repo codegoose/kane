@@ -42,6 +42,14 @@ void kane::audio::initialize() {
 	}
 }
 
+void kane::audio::garbage_collect() {
+	for (int i = 0; i < active_sounds.size(); i++) {
+		if (!active_sounds[i] || active_sounds[i]->getStatus() == sf::Sound::Playing) continue;
+		sl::debug("Clearing sound slot: {}", i);
+		active_sounds[i].reset();
+	}
+}
+
 void kane::audio::shutdown() {
 	for (auto &sound_slot : active_sounds) {
 		if (!sound_slot) continue;
@@ -66,10 +74,24 @@ int kane::audio::play_sound(const std::string_view &name, float volume, bool loo
 		sound_slot->setVolume(volume);
 		sound_slot->setLoop(looping);
 		sl::debug("Playing sound: {} (Slot #{})", name, i);
-		return i;
+		if (looping) return i;
+		else return -1;
 	}
 	sl::warn("Unable to play sound: {} (Too many sounds playing.)", name);
 	return -1;
+}
+
+void kane::audio::stop_sound(int slot) {
+	if (slot < 0 || slot >= active_sounds.size()) {
+		sl::warn("Referencing invalid slot when trying to stop a sound: {}", slot);
+		return;
+	}
+	if (active_sounds[slot] && active_sounds[slot]->getStatus() == sf::Sound::Playing) {
+		sl::debug("Stopping sound in slot: {}", slot);
+		active_sounds[slot]->stop();
+		active_sounds[slot].reset();
+		return;
+	}
 }
 
 void kane::audio::play_music(const std::string_view &name) {
