@@ -87,8 +87,10 @@ namespace kane::rendering {
 		};
 		float transform[6], translation[6], scale[6];
 		nvgTransformIdentity(transform);
-		nvgTransformTranslate(translation, ent.pos.x, -ent.pos.y); // Y-axis is heading down by default, flip it
-		nvgTransformScale(scale, ent.flipped ? -1 : 1, 1);
+		glm::vec2 location;
+		ent.render_location_cb(location);
+		nvgTransformTranslate(translation, location.x, -location.y); // Y-axis is heading down by default, flip it
+		nvgTransformScale(scale, ent.sprite_flipped ? -1 : 1, 1);
 		nvgTransformMultiply(transform, scale);
 		nvgTransformMultiply(transform, translation);
 		nvgTransform(nvg, transform[0], transform[1], transform[2], transform[3], transform[4], transform[5]);
@@ -109,8 +111,8 @@ namespace kane::rendering {
 		nvgResetTransform(nvg);
 		nvgTranslate(
 			nvg,
-			glm::round((framebuffer_size.x * .5f) - (camera::pos.x * camera::scale * tx_scale)),
-			glm::round((framebuffer_size.y * .5f) + (camera::pos.y * camera::scale * tx_scale))
+			glm::round((framebuffer_size.x * .5f) - (camera::location.x * camera::scale * tx_scale)),
+			glm::round((framebuffer_size.y * .5f) + (camera::location.y * camera::scale * tx_scale))
 		);
 		nvgScale(nvg, camera::scale, camera::scale);
 		nvgBeginPath(nvg);
@@ -170,15 +172,15 @@ bool kane::rendering::initialize(NVGcontext *nvg) {
 }
 
 void kane::rendering::render(NVGcontext *nvg, glm::ivec2 framebuffer_size) {
-	camera::pos = lp::entity->pos;
+	if (lp::entity) camera::location = lp::entity->location;
 	camera::scale = glm::round(glm::max(1.f, framebuffer_size.x / 600.f));
 	render_bg_parallax(nvg, framebuffer_size);
 	for (auto ent : entities) {
 		nvgResetTransform(nvg);
 		nvgTranslate(
 			nvg,
-			glm::round((framebuffer_size.x * .5f) - (camera::pos.x * camera::scale)),
-			glm::round((framebuffer_size.y * .5f) + (camera::pos.y * camera::scale))
+			glm::round((framebuffer_size.x * .5f) - (camera::location.x * camera::scale)),
+			glm::round((framebuffer_size.y * .5f) + (camera::location.y * camera::scale))
 		);
 		nvgScale(nvg, camera::scale, camera::scale);
 		render_entity(nvg, *ent);

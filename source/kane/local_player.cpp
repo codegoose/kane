@@ -7,7 +7,7 @@
 
 #include <glm/glm.hpp>
 
-std::unique_ptr<kane::rendering::entity> kane::lp::entity;
+std::unique_ptr<kane::game::entity> kane::lp::entity;
 
 namespace kane::lp {
 
@@ -20,7 +20,6 @@ namespace kane::lp {
 			max_health = 1000;
 			health = max_health;
 			invulnerable = false;
-			update = std::bind(&shadow_instance::update_cb, this, std::placeholders::_1);
 		}
 
 		virtual ~shadow_instance() {
@@ -39,7 +38,7 @@ namespace kane::lp {
 			if (src.id == signalling_id) return;
 		}
 
-		void update_cb(double secs) {
+		void update_cb(double secs) override {
 			if (current_anim == "shadow_attack_1" || current_anim == "shadow_attack_2") {
 				for (auto &anim : anims) anim.second.alpha = 1;
 				idle_time = 0;
@@ -61,8 +60,8 @@ namespace kane::lp {
 			}
 			if (input::lp_movement.x != 0) {
 				current_anim = "shadow_run";
-				flipped = input::lp_movement.x >= 0 ? false : true;
-				pos.x += input::lp_movement.x * 50.f * static_cast<float>(secs);
+				sprite_flipped = input::lp_movement.x >= 0 ? false : true;
+				location.x += input::lp_movement.x * 50.f * static_cast<float>(secs);
 				idle_time = 0;
 			} else {
 				idle_time += secs;

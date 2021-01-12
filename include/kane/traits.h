@@ -16,7 +16,7 @@ namespace kane::traits {
 		};
 
 		struct damage_zone_radius_signal {
-			glm::vec2 pos;
+			glm::vec2 location;
 			float radius;
 			int amount;
 		};

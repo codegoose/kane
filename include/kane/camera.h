@@ -4,6 +4,6 @@
 
 namespace kane::camera {
 
-	extern glm::vec2 pos;
+	extern glm::vec2 location;
 	extern float scale;
 }

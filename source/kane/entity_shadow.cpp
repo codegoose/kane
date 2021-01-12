@@ -167,7 +167,7 @@ void kane::pc::shadow_entity::anim_frame_cb(int frame) {
 			case 8:
 				audio::play_sound("electric_short_1", 80);
 				emit_signal("shadow_entity_attack_1", traits::mortal::damage_zone_radius_signal { 
-					pos,
+					location,
 					50.f,
 					100
 				});
@@ -179,14 +179,14 @@ void kane::pc::shadow_entity::anim_frame_cb(int frame) {
 			case 2:
 				audio::play_sound("electric_impact_3", 80);
 				traits::mortal::damage_zone_rect_signal zone;
-				zone.min.y = pos.y - 3;
-				zone.max.y = pos.y + anims[current_anim].tile_size.y;
-				if (flipped) {
-					zone.min.x = pos.x - 100;
-					zone.max.x = pos.x;
+				zone.min.y = location.y - 3;
+				zone.max.y = location.y + anims[current_anim].tile_size.y;
+				if (sprite_flipped) {
+					zone.min.x = location.x - 100;
+					zone.max.x = location.x;
 				} else {
-					zone.min.x = pos.x;
-					zone.max.x = pos.x + 100;
+					zone.min.x = location.x;
+					zone.max.x = location.x + 100;
 				}
 				zone.amount = 100;
 				emit_signal("shadow_entity_attack_2", zone);
@@ -199,4 +199,8 @@ void kane::pc::shadow_entity::anim_frame_cb(int frame) {
 		audio::stop_sound(sound_slot_charging);
 		sound_slot_charging = -1;
 	}
+}
+
+void kane::pc::shadow_entity::render_location_cb(glm::vec2 &location_out) {
+	location_out = location;
 }

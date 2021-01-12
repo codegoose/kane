@@ -31,16 +31,15 @@ namespace kane::rendering {
 	};
 
 	struct entity {
-		glm::vec2 pos { 0, 0 };
-		bool flipped { false };
+		bool sprite_flipped { false };
 		std::map<std::string, animation> anims;
 		std::map<std::string, std::string> anim_sheet_names;
 		std::string current_anim, last_stepped_animation;
-		std::function<void(double)> update;
 		entity();
 		virtual ~entity();
 		virtual void anim_sheet_assign_cb(std::string anim_name, int sprite_sheet_gl_handle, glm::ivec2 sheet_size) = 0;
 		virtual void anim_frame_cb(int frame) = 0;
+		virtual void render_location_cb(glm::vec2 &location_out) = 0;
 	};
 
 	bool initialize(NVGcontext *nvg);
