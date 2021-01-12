@@ -11,6 +11,23 @@
 
 namespace kane::rendering {
 
+	struct debug_box_info {
+		std::string name;
+		glm::vec2 min, max;
+		glm::vec4 color;
+		float secs;
+	};
+
+	struct debug_sphere_info {
+		std::string name;
+		glm::vec2 location;
+		float radius;
+		glm::vec4 color;
+		float secs;
+	};
+
+	std::vector<debug_box_info> debug_boxes;
+	std::vector<debug_sphere_info> debug_spheres;
 	std::vector<entity *> entities;
 
 	void set_animation_frame(entity &ent, animation &anim, int frame) {
@@ -105,6 +122,18 @@ namespace kane::rendering {
 
 	void update(double secs) {
 		for (auto ent : entities) update_entity(*ent, secs);
+		for (auto &dbg : debug_boxes) dbg.secs -= secs;
+		for (auto &dbg : debug_spheres) dbg.secs -= secs;
+		for (size_t i = 0; i < debug_boxes.size(); i++) {
+			if (debug_boxes[i].secs > 0) continue;
+			debug_boxes.erase(debug_boxes.begin() + i);
+			i--;
+		}
+		for (size_t i = 0; i < debug_spheres.size(); i++) {
+			if (debug_spheres[i].secs > 0) continue;
+			debug_spheres.erase(debug_spheres.begin() + i);
+			i--;
+		}
 	}
 
 	void render_bg_asset(NVGcontext *nvg, int x, int y, int w, int h, float tx_scale, int gl_tex_id, glm::ivec2 framebuffer_size) {
@@ -162,6 +191,14 @@ namespace kane::rendering {
 	}
 }
 
+kane::rendering::entity::entity() {
+	entities.push_back(this);
+}
+
+kane::rendering::entity::~entity() {
+	entities.erase(std::find(entities.begin(), entities.end(), this));
+}
+
 bool kane::rendering::initialize(NVGcontext *nvg) {
 	if (static bool first = true; first) {
 		timing::subscribe(update);
@@ -173,7 +210,7 @@ bool kane::rendering::initialize(NVGcontext *nvg) {
 
 void kane::rendering::render(NVGcontext *nvg, glm::ivec2 framebuffer_size) {
 	if (lp::entity) camera::location = lp::entity->location;
-	camera::scale = glm::round(glm::max(1.f, framebuffer_size.x / 600.f));
+	camera::scale = glm::round(glm::max(1.f, framebuffer_size.x / 800.f));
 	render_bg_parallax(nvg, framebuffer_size);
 	for (auto ent : entities) {
 		nvgResetTransform(nvg);
@@ -185,17 +222,54 @@ void kane::rendering::render(NVGcontext *nvg, glm::ivec2 framebuffer_size) {
 		nvgScale(nvg, camera::scale, camera::scale);
 		render_entity(nvg, *ent);
 	}
+	for (auto &dbg : debug_boxes) {
+		nvgResetTransform(nvg);
+		nvgTranslate(
+			nvg,
+			glm::round((framebuffer_size.x * .5f) - (camera::location.x * camera::scale)),
+			glm::round((framebuffer_size.y * .5f) + (camera::location.y * camera::scale))
+		);
+		nvgScale(nvg, camera::scale, camera::scale);
+		nvgBeginPath(nvg);
+		nvgRoundedRect(nvg, dbg.min.x, -dbg.max.y, dbg.max.x - dbg.min.x, dbg.max.y - dbg.min.y, 1);
+		nvgStrokeColor(nvg, nvgRGBAf(dbg.color[0], dbg.color[1], dbg.color[2], dbg.color[3]));
+		nvgStroke(nvg);
+		nvgFontFace(nvg, "comfortaa_bold");
+		nvgFontSize(nvg, 6);
+		nvgFillColor(nvg, nvgRGBAf(dbg.color[0], dbg.color[1], dbg.color[2], dbg.color[3]));
+		nvgTextAlign(nvg, NVG_ALIGN_LEFT | NVG_ALIGN_BOTTOM);
+		nvgText(nvg, dbg.min.x, -dbg.max.y - 1, dbg.name.data(), 0);
+	}
+	for (auto &dbg : debug_spheres) {
+		nvgResetTransform(nvg);
+		nvgTranslate(
+			nvg,
+			glm::round((framebuffer_size.x * .5f) - (camera::location.x * camera::scale)),
+			glm::round((framebuffer_size.y * .5f) + (camera::location.y * camera::scale))
+		);
+		nvgScale(nvg, camera::scale, camera::scale);
+		nvgBeginPath(nvg);
+		nvgCircle(nvg, dbg.location.x, -dbg.location.y, dbg.radius);
+		nvgStrokeColor(nvg, nvgRGBAf(dbg.color[0], dbg.color[1], dbg.color[2], dbg.color[3]));
+		nvgStroke(nvg);
+		nvgFontFace(nvg, "comfortaa");
+		nvgFontSize(nvg, 6);
+		nvgFillColor(nvg, nvgRGBAf(dbg.color[0], dbg.color[1], dbg.color[2], dbg.color[3]));
+		nvgTextAlign(nvg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
+		nvgText(nvg, dbg.location.x, dbg.location.y, dbg.name.data(), 0);
+	}
 	render_ui(nvg, framebuffer_size);
 }
 
 void kane::rendering::shutdown(NVGcontext *nvg) {
-
+	debug_boxes.clear();
+	debug_spheres.clear();
 }
 
-kane::rendering::entity::entity() {
-	entities.push_back(this);
+void kane::rendering::spawn_debug_box(const std::string &name, const glm::vec2 &min, const glm::vec2 &max, const glm::vec4 &color, float secs) {
+	debug_boxes.push_back({ name, min, max, color, secs });
 }
 
-kane::rendering::entity::~entity() {
-	entities.erase(std::find(entities.begin(), entities.end(), this));
+void kane::rendering::spawn_debug_sphere(const std::string &name, const glm::vec2 &location, float radius, const glm::vec4 &color, float secs) {
+	debug_spheres.push_back({ name, location, radius, color, secs });
 }

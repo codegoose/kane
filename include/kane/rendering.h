@@ -6,6 +6,7 @@
 #include <functional>
 
 #include <glm/vec2.hpp>
+#include <glm/vec4.hpp>
 
 struct NVGcontext;
 
@@ -45,4 +46,6 @@ namespace kane::rendering {
 	bool initialize(NVGcontext *nvg);
 	void render(NVGcontext *nvg, glm::ivec2 framebuffer_size);
 	void shutdown(NVGcontext *nvg);
+	void spawn_debug_box(const std::string &name, const glm::vec2 &min, const glm::vec2 &max, const glm::vec4 &color, float secs);
+	void spawn_debug_sphere(const std::string &name, const glm::vec2 &location, float radius, const glm::vec4 &color, float secs);
 }
