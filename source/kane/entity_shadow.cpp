@@ -180,7 +180,7 @@ void kane::pc::shadow_entity::anim_frame_cb(int frame) {
 				audio::play_sound("electric_impact_3", 80);
 				traits::mortal::damage_zone_rect_signal zone;
 				zone.min.y = location.y - 3;
-				zone.max.y = location.y + anims[current_anim].tile_size.y;
+				zone.max.y = location.y + 20;
 				if (sprite_flipped) {
 					zone.min.x = location.x - 100;
 					zone.max.x = location.x;
