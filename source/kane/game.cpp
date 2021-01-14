@@ -18,8 +18,9 @@ namespace kane::game {
 	std::vector<entity *> entities;
 }
 
-kane::game::entity::entity() {
+kane::game::entity::entity(const std::string_view &name) : name(name) {
 	entities.push_back(this);
+	sl::debug("New game entity created: {} ({})", name, reinterpret_cast<void *>(this));
 }
 
 kane::game::entity::~entity() {
