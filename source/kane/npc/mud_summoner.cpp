@@ -1,5 +1,7 @@
 #include <kane/npc/mud_summoner.h>
+#include <kane/npc/mud_minion.h>
 #include <kane/local_player.h>
+#include <kane/logging.h>
 
 #include <glm/glm.hpp>
 
@@ -65,7 +67,7 @@ void kane::npc::mud_summoner::anim_sheet_assign_cb(std::string anim_name, int sp
 			-anim.tile_size.x / 2,
 			-anim.tile_size.y
 		};
-		anim.num_wait_steps = 6;
+		anim.num_wait_steps = 3;
 		anim.frame_xy_list = {
 			{ 0, 0 },
 			{ 0, 1 },
@@ -98,13 +100,16 @@ void kane::npc::mud_summoner::receive_damage_zone_radius(const signals::source &
 }
 
 void kane::npc::mud_summoner::update_cb(double secs) {
-	if (summoning && current_anim == "summoner_idle") {
+	if (summoning && current_anim == "mud_summoner_idle") {
 		summoning = false;
 		since_last_summon = 0;
+		auto mm = new npc::mud_minion[2];
+		mm[0].location = location + glm::vec2(21, 2);
+		mm[1].location = location - glm::vec2(22, -2);
 	}
 	if (current_anim != "mud_summoner_summon") since_last_summon += secs;
 	auto distance = glm::distance(location, lp::entity->location);
-	if (distance < 200.f) {
+	if (distance < 200.f && !summoning) {
 		if (location.x > lp::entity->location.x) sprite_flipped = false;
 		if (location.x < lp::entity->location.x) sprite_flipped = true;
 		current_anim = "mud_summoner_run";
