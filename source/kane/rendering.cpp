@@ -59,7 +59,7 @@ namespace kane::rendering {
 		set_animation_frame(ent, anim, anim.current_frame);
 	}
 
-	void render_sprite(NVGcontext *nvg, sprite &spr) {
+	void render_sprite(NVGcontext *nvg, entity &ent, sprite &spr) {
 		nvgBeginPath(nvg);
 		nvgRect(nvg, spr.tile_pos.x + spr.tile_off.x, spr.tile_pos.y + spr.tile_off.y, spr.tile_size.x, spr.tile_size.y);
 		nvgFillPaint(nvg,
@@ -75,6 +75,32 @@ namespace kane::rendering {
 			)
 		);
 		nvgFill(nvg);
+		nvgStrokeColor(nvg, nvgRGBAf(.5f, 1, .5f, .1f));
+		nvgStrokeWidth(nvg, .5f);
+		nvgStroke(nvg);
+		nvgBeginPath(nvg);
+		nvgCircle(
+			nvg,
+			static_cast<float>(spr.tile_pos.x + spr.tile_off.x) + (static_cast<float>(spr.tile_size.x) * .5f),
+			static_cast<float>(spr.tile_pos.y + spr.tile_off.y) + (static_cast<float>(spr.tile_size.y) * .5f),
+			1.f
+		);
+		nvgStrokeWidth(nvg, .5f);
+		nvgStrokeColor(nvg, nvgRGBAf(0, 1, 1, .4f));
+		nvgStroke(nvg);
+		nvgBeginPath(nvg);
+		nvgMoveTo(
+			nvg,
+			static_cast<float>(spr.tile_pos.x) + (static_cast<float>(spr.tile_size.x) * .5f) + 1,
+			static_cast<float>(spr.tile_pos.y + spr.tile_off.y) + (static_cast<float>(spr.tile_size.y) * .5f)
+		);
+		nvgLineTo(
+			nvg,
+			static_cast<float>(spr.tile_pos.x) + (static_cast<float>(spr.tile_size.x) * .5f) - 1,
+			static_cast<float>(spr.tile_pos.y + spr.tile_off.y) + (static_cast<float>(spr.tile_size.y) * .5f)
+		);
+		nvgStrokeWidth(nvg, 1);
+		nvgStroke(nvg);
 	}
 
 	void render_entity(NVGcontext *nvg, entity &ent) {
@@ -111,7 +137,7 @@ namespace kane::rendering {
 		nvgTransformMultiply(transform, scale);
 		nvgTransformMultiply(transform, translation);
 		nvgTransform(nvg, transform[0], transform[1], transform[2], transform[3], transform[4], transform[5]);
-		render_sprite(nvg, anim_i->second);
+		render_sprite(nvg, ent, anim_i->second);
 	}
 
 	void update_entity(entity &ent, double secs) {
@@ -210,7 +236,7 @@ bool kane::rendering::initialize(NVGcontext *nvg) {
 
 void kane::rendering::render(NVGcontext *nvg, glm::ivec2 framebuffer_size) {
 	if (lp::entity) camera::location = lp::entity->location;
-	camera::scale = glm::round(glm::max(1.f, framebuffer_size.x / 800.f));
+	camera::scale = glm::round(glm::max(1.f, framebuffer_size.x / 600.f));
 	render_bg_parallax(nvg, framebuffer_size);
 	for (auto ent : entities) {
 		nvgResetTransform(nvg);
@@ -231,12 +257,13 @@ void kane::rendering::render(NVGcontext *nvg, glm::ivec2 framebuffer_size) {
 		);
 		nvgScale(nvg, camera::scale, camera::scale);
 		nvgBeginPath(nvg);
-		nvgRoundedRect(nvg, dbg.min.x, -dbg.max.y, dbg.max.x - dbg.min.x, dbg.max.y - dbg.min.y, 1);
-		nvgStrokeColor(nvg, nvgRGBAf(dbg.color[0], dbg.color[1], dbg.color[2], dbg.color[3]));
+		nvgRect(nvg, dbg.min.x, -dbg.max.y, dbg.max.x - dbg.min.x, dbg.max.y - dbg.min.y);
+		nvgStrokeColor(nvg, nvgRGBAf(1, 1, 1, .1f));
+		nvgStrokeWidth(nvg, .5f);
 		nvgStroke(nvg);
 		nvgFontFace(nvg, "comfortaa_bold");
-		nvgFontSize(nvg, 6);
-		nvgFillColor(nvg, nvgRGBAf(dbg.color[0], dbg.color[1], dbg.color[2], dbg.color[3]));
+		nvgFontSize(nvg, 4);
+		nvgFillColor(nvg, nvgRGBAf(1, 0, 0, .3f));
 		nvgTextAlign(nvg, NVG_ALIGN_LEFT | NVG_ALIGN_BOTTOM);
 		nvgText(nvg, dbg.min.x, -dbg.max.y - 1, dbg.name.data(), 0);
 	}
@@ -250,11 +277,12 @@ void kane::rendering::render(NVGcontext *nvg, glm::ivec2 framebuffer_size) {
 		nvgScale(nvg, camera::scale, camera::scale);
 		nvgBeginPath(nvg);
 		nvgCircle(nvg, dbg.location.x, -dbg.location.y, dbg.radius);
-		nvgStrokeColor(nvg, nvgRGBAf(dbg.color[0], dbg.color[1], dbg.color[2], dbg.color[3]));
+		nvgStrokeColor(nvg, nvgRGBAf(1, 1, 1, .1f));
+		nvgStrokeWidth(nvg, .5f);
 		nvgStroke(nvg);
-		nvgFontFace(nvg, "comfortaa");
-		nvgFontSize(nvg, 6);
-		nvgFillColor(nvg, nvgRGBAf(dbg.color[0], dbg.color[1], dbg.color[2], dbg.color[3]));
+		nvgFontFace(nvg, "comfortaa_bold");
+		nvgFontSize(nvg, 4);
+		nvgFillColor(nvg, nvgRGBAf(1, 0, 0, .3f));
 		nvgTextAlign(nvg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
 		nvgText(nvg, dbg.location.x, dbg.location.y, dbg.name.data(), 0);
 	}
