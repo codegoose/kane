@@ -4,7 +4,7 @@
 #include <kane/signals.h>
 #include <kane/traits.h>
 
-kane::pc::shadow_entity::shadow_entity() {
+kane::pc::shadow_entity::shadow_entity() : game::entity("local_player") {
 	current_anim = "shadow_idle";
 	anims["shadow_idle"];
 	anims["shadow_run"];

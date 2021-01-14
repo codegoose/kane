@@ -3,8 +3,8 @@
 
 #include <glm/glm.hpp>
 
-kane::npc::mud_minion::mud_minion() {
-	signalling_id = "mud_minion_npc";
+kane::npc::mud_minion::mud_minion() : game::entity("mud_minion_npc") {
+	signalling_id = name;
 	current_anim = "mud_minion_move";
 	anims["mud_minion_move"];
 	anims["mud_minion_attack"];

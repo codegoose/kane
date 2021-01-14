@@ -3,7 +3,7 @@
 
 #include <glm/glm.hpp>
 
-kane::npc::merchant::merchant() {
+kane::npc::merchant::merchant() : game::entity("merchant_npc") {
 	current_anim = "merchant_idle";
 	anims["merchant_idle"];
 	anims["merchant_walk"];

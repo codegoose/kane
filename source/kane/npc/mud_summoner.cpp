@@ -3,8 +3,8 @@
 
 #include <glm/glm.hpp>
 
-kane::npc::mud_summoner::mud_summoner() {
-	signalling_id = "mud_summoner_npc";
+kane::npc::mud_summoner::mud_summoner() : game::entity("mud_summoner_npc") {
+	signalling_id = name;
 	current_anim = "mud_summoner_idle";
 	anims["mud_summoner_idle"];
 	anims["mud_summoner_run"];
