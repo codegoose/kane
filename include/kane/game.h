@@ -1,12 +1,16 @@
 #pragma once
 
+#include <string>
+
 #include <glm/vec2.hpp>
 
 namespace kane::game {
 
 	struct entity {
 
-		entity();
+		const std::string name;
+
+		entity(const std::string_view &name);
 		virtual ~entity();
 
 		glm::vec2 bb_min { 0, 0 }, bb_max { 0, 0 };
