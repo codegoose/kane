@@ -92,6 +92,7 @@ void kane::game::remove_entity(std::shared_ptr<entity> existing_entity) {
 
 void kane::game::emit_damage(int affected_alliances, glm::vec2 location, float radius, int amount, const std::string_view &description) {
 	auto entities_snapshot = entities;
+	rendering::spawn_debug_sphere(description.data(), location, radius, { }, 4);
 	for (auto &ent : entities_snapshot) {
 		if ((affected_alliances & ent->team) == 0) continue;
 		if (glm::distance(location, ent->location) > radius) continue;
@@ -102,6 +103,13 @@ void kane::game::emit_damage(int affected_alliances, glm::vec2 location, float r
 
 void kane::game::emit_damage(int affected_alliances, glm::vec2 min_location, glm::vec2 max_location, int amount, const std::string_view &description) {
 	auto entities_snapshot = entities;
+	rendering::spawn_debug_box(description.data(), min_location, max_location, { }, 4);
+	for (auto &ent : entities_snapshot) {
+		if ((affected_alliances & ent->team) == 0) continue;
+		if (!(ent->location.x >= min_location.x && ent->location.x <= max_location.x && ent->location.y >= min_location.y && ent->location.y <= max_location.y)) continue;
+		sl::warn("Emitted damage affects {} ({}, {}).", ent->name, reinterpret_cast<void *>(ent.get()), description);
+		ent->receive_damage(description, amount);
+	}
 }
 
 void kane::game::shutdown() {

@@ -98,8 +98,8 @@ void kane::npc::mud_summoner::update_cb(double secs) {
 		game::add_entity(minion_1);
 		game::add_entity(minion_2);
 	}
-	if (current_anim != "mud_summoner_summon") since_last_summon += secs;
-	auto distance = glm::distance(location, lp::entity->location);
+	if (current_anim != "mud_summoner_summon" && lp::entity) since_last_summon += secs;
+	auto distance = lp::entity ? glm::distance(location, lp::entity->location) : 10000.f;
 	if (distance < 200.f && !summoning) {
 		if (location.x > lp::entity->location.x) sprite_flipped = false;
 		if (location.x < lp::entity->location.x) sprite_flipped = true;

@@ -1,6 +1,7 @@
 #include <kane/npc/mud_minion.h>
 #include <kane/local_player.h>
 
+#include <fmt/format.h>
 #include <glm/glm.hpp>
 
 kane::npc::mud_minion::mud_minion() : game::entity("mud_minion_npc") {
@@ -86,18 +87,25 @@ void kane::npc::mud_minion::anim_sheet_assign_cb(std::string anim_name, int spri
 }
 
 void kane::npc::mud_minion::anim_frame_cb(int frame) {
+	if (current_anim == "mud_minion_attack" && frame == 5) game::emit_damage(game::alliance::player | game::alliance::civilian | game::alliance::inanimate, location, 25, 12, fmt::format("{}:{}", name, current_anim));
 	if (current_anim == "mud_minion_damage" && frame == 7) remove_from_game = true;
 }
 
 void kane::npc::mud_minion::update_cb(double secs) {
 	if (current_anim == "mud_minion_damage") return;
+	if (!lp::entity) {
+		current_anim = "mud_minion_damage";
+		return;
+	}
 	if (current_anim == "mud_minion_attack") return;
 	current_anim = "mud_minion_move";
-	auto distance = glm::distance(location, lp::entity->location);
-	if (distance > 20.f + follow_variance) {
-		sprite_flipped = location.x > lp::entity->location.x ? true : false;
-		location.x += (sprite_flipped ? -40.f : 40.f) * secs;
-	} else current_anim = "mud_minion_attack";
+	if (lp::entity) {
+		auto distance = glm::distance(location, lp::entity->location);
+		if (distance > 20.f + follow_variance) {
+			sprite_flipped = location.x > lp::entity->location.x ? true : false;
+			location.x += (sprite_flipped ? -40.f : 40.f) * secs;
+		} else current_anim = "mud_minion_attack";
+	}
 }
 
 void kane::npc::mud_minion::receive_damage(const std::string_view description, int amount) {
