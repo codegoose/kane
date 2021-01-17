@@ -13,7 +13,6 @@ add_executable(
 	source/kane/cursor.cpp
 	source/kane/input.cpp
 	source/kane/local_player.cpp
-	source/kane/entity_shadow.cpp
 	source/kane/npc/merchant.cpp
 	source/kane/npc/mud_summoner.cpp
 	source/kane/npc/mud_minion.cpp
