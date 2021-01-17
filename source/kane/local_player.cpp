@@ -2,21 +2,18 @@
 #include <kane/logging.h>
 #include <kane/input.h>
 #include <kane/entity_shadow.h>
-#include <kane/signals.h>
-#include <kane/traits.h>
 
 #include <glm/glm.hpp>
 
-std::unique_ptr<kane::game::entity> kane::lp::entity;
+std::shared_ptr<kane::game::entity> kane::lp::entity;
 
 namespace kane::lp {
 
-	struct shadow_instance : pc::shadow_entity, traits::mortal {
+	struct shadow_instance : pc::shadow_entity {
 
 		double idle_time = 0;
 
 		shadow_instance() {
-			signalling_id = "local_player";
 			max_health = 1000;
 			health = max_health;
 			invulnerable = false;
@@ -24,18 +21,6 @@ namespace kane::lp {
 
 		virtual ~shadow_instance() {
 
-		}
-
-		void receive_damage(const signals::source &src, int amount) override {
-			if (src.id == signalling_id) return;
-		}
-
-		void receive_damage_zone_rect(const signals::source &src, damage_zone_rect_signal info) override {
-			if (src.id == signalling_id) return;
-		}
-
-		void receive_damage_zone_radius(const signals::source &src, damage_zone_radius_signal info) override {
-			if (src.id == signalling_id) return;
 		}
 
 		void update_cb(double secs) override {
@@ -75,9 +60,11 @@ namespace kane::lp {
 }
 
 void kane::lp::initialize() {
-	entity = std::make_unique<shadow_instance>();
+	entity = std::make_shared<shadow_instance>();
+	game::add_entity(entity);
 }
 
 void kane::lp::shutdown() {
-	entity.release();
+	game::remove_entity(entity);
+	entity.reset();
 }

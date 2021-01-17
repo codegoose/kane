@@ -36,7 +36,6 @@ namespace kane::rendering {
 		std::map<std::string, animation> anims;
 		std::map<std::string, std::string> anim_sheet_names;
 		std::string current_anim, last_stepped_animation;
-		entity();
 		virtual ~entity();
 		virtual void anim_sheet_assign_cb(std::string anim_name, int sprite_sheet_gl_handle, glm::ivec2 sheet_size) = 0;
 		virtual void anim_frame_cb(int frame) = 0;

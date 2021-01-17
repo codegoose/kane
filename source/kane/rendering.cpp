@@ -4,10 +4,16 @@
 #include <kane/assets.h>
 #include <kane/timing.h>
 #include <kane/camera.h>
+#include <kane/game.h>
 #include <kane/local_player.h>
 
 #include <nanovg.h>
 #include <glm/glm.hpp>
+
+namespace kane::game {
+
+	extern std::vector<std::shared_ptr<entity>> entities;
+}
 
 namespace kane::rendering {
 
@@ -28,19 +34,18 @@ namespace kane::rendering {
 
 	std::vector<debug_box_info> debug_boxes;
 	std::vector<debug_sphere_info> debug_spheres;
-	std::vector<entity *> entities;
 
-	void set_animation_frame(entity &ent, animation &anim, int frame) {
+	void set_animation_frame(std::shared_ptr<game::entity> ent, animation &anim, int frame) {
 		anim.steps_left_to_wait = anim.num_wait_steps;
 		anim.current_frame = frame;
-		ent.last_stepped_animation = ent.current_anim;
-		ent.anim_frame_cb(frame);
+		ent->last_stepped_animation = ent->current_anim;
+		ent->anim_frame_cb(frame);
 	}
 
-	void step_animation(entity &ent, animation &anim) {
+	void step_animation(std::shared_ptr<game::entity> ent, animation &anim) {
 		anim.steps_left_to_wait--;
-		if (ent.last_stepped_animation != ent.current_anim) {
-			sl::debug("Swapping animation: {} -> {}", ent.last_stepped_animation, ent.current_anim);
+		if (ent->last_stepped_animation != ent->current_anim) {
+			sl::debug("Swapping animation: {} -> {}", ent->last_stepped_animation, ent->current_anim);
 			set_animation_frame(ent, anim, 0);
 		}
 		if (anim.steps_left_to_wait > 0) return;
@@ -50,8 +55,8 @@ namespace kane::rendering {
 			else {
 				if (anim.next_anim == "") anim.current_frame = anim.frame_xy_list.size() - 1;
 				else {
-					ent.current_anim = anim.next_anim;
-					set_animation_frame(ent, ent.anims[ent.current_anim], 0);
+					ent->current_anim = anim.next_anim;
+					set_animation_frame(ent, ent->anims[ent->current_anim], 0);
 					return;
 				}
 			}
@@ -59,7 +64,7 @@ namespace kane::rendering {
 		set_animation_frame(ent, anim, anim.current_frame);
 	}
 
-	void render_sprite(NVGcontext *nvg, entity &ent, sprite &spr) {
+	void render_sprite(NVGcontext *nvg, std::shared_ptr<game::entity> ent, sprite &spr) {
 		nvgBeginPath(nvg);
 		nvgRect(nvg, spr.tile_pos.x + spr.tile_off.x, spr.tile_pos.y + spr.tile_off.y, spr.tile_size.x, spr.tile_size.y);
 		nvgFillPaint(nvg,
@@ -103,24 +108,24 @@ namespace kane::rendering {
 		nvgStroke(nvg);
 	}
 
-	void render_entity(NVGcontext *nvg, entity &ent) {
-		auto anim_i = ent.anims.find(ent.current_anim);
-		if (anim_i == ent.anims.end()) {
-			sl::warn("Assigned animation ({}) doesn't appear to be valid.", ent.current_anim);
+	void render_entity(NVGcontext *nvg, std::shared_ptr<game::entity> ent) {
+		auto anim_i = ent->anims.find(ent->current_anim);
+		if (anim_i == ent->anims.end()) {
+			sl::warn("Assigned animation ({}) doesn't appear to be valid.", ent->current_anim);
 			return;
 		}
 		if (anim_i->second.sheet_img == 0) {
-			auto sheet_i = assets::sprite_sheet_gl_handles.find(ent.current_anim);
+			auto sheet_i = assets::sprite_sheet_gl_handles.find(ent->current_anim);
 			if (sheet_i == assets::sprite_sheet_gl_handles.end()) {
-				sl::warn("Unable to find sprite for current animation: ", ent.current_anim);
+				sl::warn("Unable to find sprite for current animation: ", ent->current_anim);
 				return;
 			}
 			glm::ivec2 sheet_size;
 			nvgImageSize(nvg, sheet_i->second, &sheet_size.x, &sheet_size.y);
-			sl::debug("Linking sprite sheet to entity: {}, GL texture #{}. ({}, {})", ent.current_anim, sheet_i->second, sheet_size.x, sheet_size.y);
-			ent.anim_sheet_assign_cb(ent.current_anim, sheet_i->second, sheet_size);
+			sl::debug("Linking sprite sheet to entity: {}, GL texture #{}. ({}, {})", ent->current_anim, sheet_i->second, sheet_size.x, sheet_size.y);
+			ent->anim_sheet_assign_cb(ent->current_anim, sheet_i->second, sheet_size);
 			if (anim_i->second.sheet_img == 0) {
-				sl::warn("Sprite sheet proposal wasn't absorbed: {}, GL texture #{}.", ent.current_anim, sheet_i->second);
+				sl::warn("Sprite sheet proposal wasn't absorbed: {}, GL texture #{}.", ent->current_anim, sheet_i->second);
 				return;
 			}
 		}
@@ -131,23 +136,26 @@ namespace kane::rendering {
 		float transform[6], translation[6], scale[6];
 		nvgTransformIdentity(transform);
 		glm::vec2 location;
-		ent.render_location_cb(location);
+		ent->render_location_cb(location);
 		nvgTransformTranslate(translation, location.x, -location.y); // Y-axis is heading down by default, flip it
-		nvgTransformScale(scale, ent.sprite_flipped ? -1 : 1, 1);
+		nvgTransformScale(scale, ent->sprite_flipped ? -1 : 1, 1);
 		nvgTransformMultiply(transform, scale);
 		nvgTransformMultiply(transform, translation);
 		nvgTransform(nvg, transform[0], transform[1], transform[2], transform[3], transform[4], transform[5]);
 		render_sprite(nvg, ent, anim_i->second);
 	}
 
-	void update_entity(entity &ent, double secs) {
-		auto anim = ent.anims.find(ent.current_anim);
-		if (anim == ent.anims.end() || anim->second.sheet_img == 0) return;
-		step_animation(ent, ent.anims[ent.current_anim]);
+	void update_entity(std::shared_ptr<game::entity> ent, double secs) {
+		auto anim = ent->anims.find(ent->current_anim);
+		if (anim == ent->anims.end() || anim->second.sheet_img == 0) return;
+		step_animation(ent, ent->anims[ent->current_anim]);
 	}
 
 	void update(double secs) {
-		for (auto ent : entities) update_entity(*ent, secs);
+		{
+			auto entities_snapshot = game::entities;
+			for (auto ent : entities_snapshot) update_entity(ent, secs);
+		}
 		for (auto &dbg : debug_boxes) dbg.secs -= secs;
 		for (auto &dbg : debug_spheres) dbg.secs -= secs;
 		for (size_t i = 0; i < debug_boxes.size(); i++) {
@@ -217,12 +225,8 @@ namespace kane::rendering {
 	}
 }
 
-kane::rendering::entity::entity() {
-	entities.push_back(this);
-}
-
 kane::rendering::entity::~entity() {
-	entities.erase(std::find(entities.begin(), entities.end(), this));
+
 }
 
 bool kane::rendering::initialize(NVGcontext *nvg) {
@@ -238,15 +242,18 @@ void kane::rendering::render(NVGcontext *nvg, glm::ivec2 framebuffer_size) {
 	if (lp::entity) camera::location = lp::entity->location;
 	camera::scale = glm::round(glm::max(1.f, framebuffer_size.x / 600.f));
 	render_bg_parallax(nvg, framebuffer_size);
-	for (auto ent : entities) {
-		nvgResetTransform(nvg);
-		nvgTranslate(
-			nvg,
-			glm::round((framebuffer_size.x * .5f) - (camera::location.x * camera::scale)),
-			glm::round((framebuffer_size.y * .5f) + (camera::location.y * camera::scale))
-		);
-		nvgScale(nvg, camera::scale, camera::scale);
-		render_entity(nvg, *ent);
+	{
+		auto entities_snapshot = game::entities;
+		for (auto ent : entities_snapshot) {
+			nvgResetTransform(nvg);
+			nvgTranslate(
+				nvg,
+				glm::round((framebuffer_size.x * .5f) - (camera::location.x * camera::scale)),
+				glm::round((framebuffer_size.y * .5f) + (camera::location.y * camera::scale))
+			);
+			nvgScale(nvg, camera::scale, camera::scale);
+			render_entity(nvg, ent);
+		}
 	}
 	for (auto &dbg : debug_boxes) {
 		nvgResetTransform(nvg);

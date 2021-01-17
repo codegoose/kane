@@ -59,22 +59,6 @@ void kane::npc::merchant::anim_frame_cb(int frame) {
 
 }
 
-void kane::npc::merchant::receive_damage(const signals::source &src, int amount) {
-
-}
-
-void kane::npc::merchant::receive_damage_zone_rect(const signals::source &src, damage_zone_rect_signal info) {
-	if (!(location.x >= info.min.x && location.x <= info.max.x && location.y >= info.min.y && location.y <= info.max.y)) return;
-	running_from_player = true;
-	state_timing = 3.f;
-}
-
-void kane::npc::merchant::receive_damage_zone_radius(const signals::source &src, damage_zone_radius_signal info) {
-	if (glm::distance(location, info.location) > info.radius) return;
-	running_from_player = true;
-	state_timing = 3.f;
-}
-
 void kane::npc::merchant::update_cb(double secs) {
 	if (running_from_player) {
 		if (lp::entity) {

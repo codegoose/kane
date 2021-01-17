@@ -56,8 +56,8 @@ namespace kane {
 				audio::garbage_collect();
 			}
 			glfwHideWindow(window);
-			game::shutdown();
 			lp::shutdown();
+			game::shutdown();
 			audio::shutdown();
 			input::shutdown();
 			rendering::shutdown(nvg);

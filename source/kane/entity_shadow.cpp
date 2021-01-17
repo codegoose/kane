@@ -1,8 +1,6 @@
 #include <kane/entity_shadow.h>
 #include <kane/logging.h>
 #include <kane/audio.h>
-#include <kane/signals.h>
-#include <kane/traits.h>
 
 kane::pc::shadow_entity::shadow_entity() : game::entity("local_player") {
 	current_anim = "shadow_idle";
@@ -166,11 +164,13 @@ void kane::pc::shadow_entity::anim_frame_cb(int frame) {
 				break;
 			case 8:
 				audio::play_sound("electric_short_1", 80);
+				/*
 				emit_signal("shadow_entity_attack_1", traits::mortal::damage_zone_radius_signal { 
 					location,
 					50.f,
 					100
 				});
+				*/
 				break;
 		}
 	}
@@ -178,6 +178,7 @@ void kane::pc::shadow_entity::anim_frame_cb(int frame) {
 		switch (frame) {
 			case 2:
 				audio::play_sound("electric_impact_3", 80);
+				/*
 				traits::mortal::damage_zone_rect_signal zone;
 				zone.min.y = location.y - 3;
 				zone.max.y = location.y + 20;
@@ -190,6 +191,7 @@ void kane::pc::shadow_entity::anim_frame_cb(int frame) {
 				}
 				zone.amount = 100;
 				emit_signal("shadow_entity_attack_2", zone);
+				*/
 				break;
 		}
 	}

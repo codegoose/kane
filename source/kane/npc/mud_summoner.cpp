@@ -6,7 +6,6 @@
 #include <glm/glm.hpp>
 
 kane::npc::mud_summoner::mud_summoner() : game::entity("mud_summoner_npc") {
-	signalling_id = name;
 	current_anim = "mud_summoner_idle";
 	anims["mud_summoner_idle"];
 	anims["mud_summoner_run"];
@@ -87,25 +86,16 @@ void kane::npc::mud_summoner::anim_frame_cb(int frame) {
 
 }
 
-void kane::npc::mud_summoner::receive_damage(const signals::source &src, int amount) {
-	if (src.id == signalling_id) return;
-}
-
-void kane::npc::mud_summoner::receive_damage_zone_rect(const signals::source &src, damage_zone_rect_signal info) {
-
-}
-
-void kane::npc::mud_summoner::receive_damage_zone_radius(const signals::source &src, damage_zone_radius_signal info) {
-
-}
-
 void kane::npc::mud_summoner::update_cb(double secs) {
 	if (summoning && current_anim == "mud_summoner_idle") {
 		summoning = false;
 		since_last_summon = 0;
-		auto mm = new npc::mud_minion[2];
-		mm[0].location = location + glm::vec2(21, 2);
-		mm[1].location = location - glm::vec2(22, -2);
+		auto minion_1 = std::make_shared<npc::mud_minion>();
+		auto minion_2 = std::make_shared<npc::mud_minion>();
+		minion_1->location = location + glm::vec2(21, 2);
+		minion_2->location = location - glm::vec2(22, -2);
+		game::add_entity(minion_1);
+		game::add_entity(minion_2);
 	}
 	if (current_anim != "mud_summoner_summon") since_last_summon += secs;
 	auto distance = glm::distance(location, lp::entity->location);

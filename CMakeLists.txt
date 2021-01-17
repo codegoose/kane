@@ -19,8 +19,6 @@ add_executable(
 	source/kane/npc/mud_minion.cpp
 	source/kane/camera.cpp
 	source/kane/audio.cpp
-	source/kane/signals.cpp
-	source/kane/traits.cpp
 	source/kane/game.cpp
 )
 

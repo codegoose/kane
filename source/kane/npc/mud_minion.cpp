@@ -4,7 +4,6 @@
 #include <glm/glm.hpp>
 
 kane::npc::mud_minion::mud_minion() : game::entity("mud_minion_npc") {
-	signalling_id = name;
 	current_anim = "mud_minion_move";
 	anims["mud_minion_move"];
 	anims["mud_minion_attack"];
@@ -87,22 +86,6 @@ void kane::npc::mud_minion::anim_sheet_assign_cb(std::string anim_name, int spri
 
 void kane::npc::mud_minion::anim_frame_cb(int frame) {
 
-}
-
-void kane::npc::mud_minion::receive_damage(const signals::source &src, int amount) {
-	if (src.id == signalling_id) return;
-}
-
-void kane::npc::mud_minion::receive_damage_zone_rect(const signals::source &src, damage_zone_rect_signal info) {
-	if (src.id == signalling_id) return;
-	if (!(location.x >= info.min.x && location.x <= info.max.x && location.y >= info.min.y && location.y <= info.max.y)) return;
-	current_anim = "mud_minion_damage";
-}
-
-void kane::npc::mud_minion::receive_damage_zone_radius(const signals::source &src, damage_zone_radius_signal info) {
-	if (src.id == signalling_id) return;
-	if (glm::distance(location, info.location) > info.radius) return;
-	current_anim = "mud_minion_damage";
 }
 
 void kane::npc::mud_minion::update_cb(double secs) {
