@@ -42,6 +42,8 @@ namespace kane::rendering {
 		virtual void render_location_cb(glm::vec2 &location_out) = 0;
 	};
 
+	extern bool enable_debug_drawing;
+
 	bool initialize(NVGcontext *nvg);
 	void render(NVGcontext *nvg, glm::ivec2 framebuffer_size);
 	void shutdown(NVGcontext *nvg);

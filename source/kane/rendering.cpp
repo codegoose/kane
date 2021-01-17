@@ -17,6 +17,8 @@ namespace kane::game {
 
 namespace kane::rendering {
 
+	bool enable_debug_drawing = false;
+
 	struct debug_box_info {
 		std::string name;
 		glm::vec2 min, max;
@@ -80,6 +82,7 @@ namespace kane::rendering {
 			)
 		);
 		nvgFill(nvg);
+		if (!enable_debug_drawing) return;
 		nvgStrokeColor(nvg, nvgRGBAf(.5f, 1, .5f, .1f));
 		nvgStrokeWidth(nvg, .5f);
 		nvgStroke(nvg);
@@ -255,43 +258,45 @@ void kane::rendering::render(NVGcontext *nvg, glm::ivec2 framebuffer_size) {
 			render_entity(nvg, ent);
 		}
 	}
-	for (auto &dbg : debug_boxes) {
-		nvgResetTransform(nvg);
-		nvgTranslate(
-			nvg,
-			glm::round((framebuffer_size.x * .5f) - (camera::location.x * camera::scale)),
-			glm::round((framebuffer_size.y * .5f) + (camera::location.y * camera::scale))
-		);
-		nvgScale(nvg, camera::scale, camera::scale);
-		nvgBeginPath(nvg);
-		nvgRect(nvg, dbg.min.x, -dbg.max.y, dbg.max.x - dbg.min.x, dbg.max.y - dbg.min.y);
-		nvgStrokeColor(nvg, nvgRGBAf(1, 1, 1, .1f));
-		nvgStrokeWidth(nvg, .5f);
-		nvgStroke(nvg);
-		nvgFontFace(nvg, "comfortaa_bold");
-		nvgFontSize(nvg, 4);
-		nvgFillColor(nvg, nvgRGBAf(1, 0, 0, .3f));
-		nvgTextAlign(nvg, NVG_ALIGN_LEFT | NVG_ALIGN_BOTTOM);
-		nvgText(nvg, dbg.min.x, -dbg.max.y - 1, dbg.name.data(), 0);
-	}
-	for (auto &dbg : debug_spheres) {
-		nvgResetTransform(nvg);
-		nvgTranslate(
-			nvg,
-			glm::round((framebuffer_size.x * .5f) - (camera::location.x * camera::scale)),
-			glm::round((framebuffer_size.y * .5f) + (camera::location.y * camera::scale))
-		);
-		nvgScale(nvg, camera::scale, camera::scale);
-		nvgBeginPath(nvg);
-		nvgCircle(nvg, dbg.location.x, -dbg.location.y, dbg.radius);
-		nvgStrokeColor(nvg, nvgRGBAf(1, 1, 1, .1f));
-		nvgStrokeWidth(nvg, .5f);
-		nvgStroke(nvg);
-		nvgFontFace(nvg, "comfortaa_bold");
-		nvgFontSize(nvg, 4);
-		nvgFillColor(nvg, nvgRGBAf(1, 0, 0, .3f));
-		nvgTextAlign(nvg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
-		nvgText(nvg, dbg.location.x, dbg.location.y, dbg.name.data(), 0);
+	if (enable_debug_drawing) {
+		for (auto &dbg : debug_boxes) {
+			nvgResetTransform(nvg);
+			nvgTranslate(
+				nvg,
+				glm::round((framebuffer_size.x * .5f) - (camera::location.x * camera::scale)),
+				glm::round((framebuffer_size.y * .5f) + (camera::location.y * camera::scale))
+			);
+			nvgScale(nvg, camera::scale, camera::scale);
+			nvgBeginPath(nvg);
+			nvgRect(nvg, dbg.min.x, -dbg.max.y, dbg.max.x - dbg.min.x, dbg.max.y - dbg.min.y);
+			nvgStrokeColor(nvg, nvgRGBAf(1, 1, 1, .1f));
+			nvgStrokeWidth(nvg, .5f);
+			nvgStroke(nvg);
+			nvgFontFace(nvg, "comfortaa_bold");
+			nvgFontSize(nvg, 4);
+			nvgFillColor(nvg, nvgRGBAf(1, 0, 0, .3f));
+			nvgTextAlign(nvg, NVG_ALIGN_LEFT | NVG_ALIGN_BOTTOM);
+			nvgText(nvg, dbg.min.x, -dbg.max.y - 1, dbg.name.data(), 0);
+		}
+		for (auto &dbg : debug_spheres) {
+			nvgResetTransform(nvg);
+			nvgTranslate(
+				nvg,
+				glm::round((framebuffer_size.x * .5f) - (camera::location.x * camera::scale)),
+				glm::round((framebuffer_size.y * .5f) + (camera::location.y * camera::scale))
+			);
+			nvgScale(nvg, camera::scale, camera::scale);
+			nvgBeginPath(nvg);
+			nvgCircle(nvg, dbg.location.x, -dbg.location.y, dbg.radius);
+			nvgStrokeColor(nvg, nvgRGBAf(1, 1, 1, .1f));
+			nvgStrokeWidth(nvg, .5f);
+			nvgStroke(nvg);
+			nvgFontFace(nvg, "comfortaa_bold");
+			nvgFontSize(nvg, 4);
+			nvgFillColor(nvg, nvgRGBAf(1, 0, 0, .3f));
+			nvgTextAlign(nvg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
+			nvgText(nvg, dbg.location.x, dbg.location.y, dbg.name.data(), 0);
+		}
 	}
 	render_ui(nvg, framebuffer_size);
 }
@@ -302,9 +307,11 @@ void kane::rendering::shutdown(NVGcontext *nvg) {
 }
 
 void kane::rendering::spawn_debug_box(const std::string &name, const glm::vec2 &min, const glm::vec2 &max, const glm::vec4 &color, float secs) {
+	if (!enable_debug_drawing) return;
 	debug_boxes.push_back({ name, min, max, color, secs });
 }
 
 void kane::rendering::spawn_debug_sphere(const std::string &name, const glm::vec2 &location, float radius, const glm::vec4 &color, float secs) {
+	if (!enable_debug_drawing) return;
 	debug_spheres.push_back({ name, location, radius, color, secs });
 }
