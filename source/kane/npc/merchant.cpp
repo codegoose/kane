@@ -86,6 +86,11 @@ void kane::npc::merchant::update_cb(double secs) {
 	if (location.x < -30) sprite_flipped = false;
 }
 
+void kane::npc::merchant::receive_damage(const std::string_view description, int amount) {
+	running_from_player = true;
+	state_timing = 4.f;
+}
+
 void kane::npc::merchant::render_location_cb(glm::vec2 &location_out) {
 	location_out = location;
 }
