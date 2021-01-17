@@ -8,6 +8,7 @@ kane::npc::mud_minion::mud_minion() : game::entity("mud_minion_npc") {
 	anims["mud_minion_move"];
 	anims["mud_minion_attack"];
 	anims["mud_minion_damage"];
+	team = game::alliance::hoard;
 }
 
 kane::npc::mud_minion::~mud_minion() {
@@ -85,7 +86,7 @@ void kane::npc::mud_minion::anim_sheet_assign_cb(std::string anim_name, int spri
 }
 
 void kane::npc::mud_minion::anim_frame_cb(int frame) {
-
+	if (current_anim == "mud_minion_damage" && frame == 7) remove_from_game = true;
 }
 
 void kane::npc::mud_minion::update_cb(double secs) {
@@ -97,6 +98,11 @@ void kane::npc::mud_minion::update_cb(double secs) {
 		sprite_flipped = location.x > lp::entity->location.x ? true : false;
 		location.x += (sprite_flipped ? -40.f : 40.f) * secs;
 	} else current_anim = "mud_minion_attack";
+}
+
+void kane::npc::mud_minion::receive_damage(const std::string_view description, int amount) {
+	health -= amount;
+	current_anim = "mud_minion_damage";
 }
 
 void kane::npc::mud_minion::render_location_cb(glm::vec2 &location_out) {

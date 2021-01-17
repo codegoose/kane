@@ -61,6 +61,7 @@ namespace kane::lp {
 
 void kane::lp::initialize() {
 	entity = std::make_shared<shadow_instance>();
+	entity->team = game::alliance::player;
 	game::add_entity(entity);
 }
 

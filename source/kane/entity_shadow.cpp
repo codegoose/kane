@@ -164,13 +164,7 @@ void kane::pc::shadow_entity::anim_frame_cb(int frame) {
 				break;
 			case 8:
 				audio::play_sound("electric_short_1", 80);
-				/*
-				emit_signal("shadow_entity_attack_1", traits::mortal::damage_zone_radius_signal { 
-					location,
-					50.f,
-					100
-				});
-				*/
+				game::emit_damage(game::alliance::hoard, location, 50.f, 100, fmt::format("{}:{}", name, current_anim));
 				break;
 		}
 	}

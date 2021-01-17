@@ -10,6 +10,7 @@ kane::npc::mud_summoner::mud_summoner() : game::entity("mud_summoner_npc") {
 	anims["mud_summoner_idle"];
 	anims["mud_summoner_run"];
 	anims["mud_summoner_summon"];
+	team = game::alliance::hoard;
 }
 
 kane::npc::mud_summoner::~mud_summoner() {

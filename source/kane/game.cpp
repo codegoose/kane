@@ -16,18 +16,39 @@ namespace kane::game {
 }
 
 kane::game::entity::entity(const std::string_view &name) : name(name) {
-	sl::warn("New game entity created: {} ({})", name, reinterpret_cast<void *>(this));
+	sl::warn("Game entity constructed: {} ({})", name, reinterpret_cast<void *>(this));
 }
 
 kane::game::entity::~entity() {
-	sl::warn("Destroying game entity: {} ({})", name, reinterpret_cast<void *>(this));
+	sl::warn("Game entity destructed: {} ({})", name, reinterpret_cast<void *>(this));
+}
+
+void kane::game::entity::update_cb(const double secs) {
+
+}
+
+void kane::game::entity::receive_damage(const std::string_view description, int amount) {
+
+}
+
+bool kane::game::entity::exists_in_game() {
+	for (auto &ent : entities) {
+		if (ent.get() != this) continue;
+		return true;
+	}
+	return false;
 }
 
 namespace kane::game {
 
 	void update_varying(double secs) {
-		auto copies = entities;
-		for (auto &cent : copies) cent->update_cb(secs);
+		auto entities_snapshot = entities;
+		for (auto &ent : entities_snapshot) {
+			ent->update_cb(secs);
+			if (!ent->remove_from_game) continue;
+			sl::warn("Entity marked for removal: {} ({})", ent->name, reinterpret_cast<void *>(ent.get()));
+			remove_entity(ent);
+		}
 	}
 }
 
@@ -67,6 +88,20 @@ void kane::game::remove_entity(std::shared_ptr<entity> existing_entity) {
 		entities.erase(entities.begin() + i);
 		i--;
 	}
+}
+
+void kane::game::emit_damage(int affected_alliances, glm::vec2 location, float radius, int amount, const std::string_view &description) {
+	auto entities_snapshot = entities;
+	for (auto &ent : entities_snapshot) {
+		if ((affected_alliances & ent->team) == 0) continue;
+		if (glm::distance(location, ent->location) > radius) continue;
+		sl::warn("Emitted damage affects {} ({}, {}).", ent->name, reinterpret_cast<void *>(ent.get()), description);
+		ent->receive_damage(description, amount);
+	}
+}
+
+void kane::game::emit_damage(int affected_alliances, glm::vec2 min_location, glm::vec2 max_location, int amount, const std::string_view &description) {
+	auto entities_snapshot = entities;
 }
 
 void kane::game::shutdown() {
