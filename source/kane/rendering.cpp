@@ -253,6 +253,13 @@ namespace kane::rendering {
 		}
 	}
 
+	void render_shrines(NVGcontext *nvg, glm::ivec2 framebuffer_size) {
+		auto img_1 = assets::sprite_sheet_gl_handles["shrine_1"];
+		int img_1_w, img_1_h;
+		nvgImageSize(nvg, img_1, &img_1_w, &img_1_h);
+		render_bg_asset(nvg, 0, -img_1_h, img_1_w, img_1_h, 1, img_1, framebuffer_size);
+	}
+
 	void render_ui(NVGcontext *nvg, glm::ivec2 framebuffer_size) {
 		nvgResetTransform(nvg);
 		nvgFontFace(nvg, "comfortaa_bold");
@@ -292,6 +299,7 @@ void kane::rendering::render(NVGcontext *nvg, glm::ivec2 framebuffer_size) {
 	camera::view_max = { camera::location.x + (camera_viewport_size.x * .5f), camera::location.y + (camera_viewport_size.y * .5f) };
 	// sl::info("{}, {}; {}, {}", camera::view_min.x, camera::view_min.y, camera::view_max.x, camera::view_max.y);
 	render_bg_parallax(nvg, framebuffer_size);
+	render_shrines(nvg, framebuffer_size);
 	{
 		auto entities_snapshot = game::entities;
 		for (auto ent : entities_snapshot) {
