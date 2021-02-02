@@ -285,7 +285,7 @@ bool kane::rendering::initialize(NVGcontext *nvg) {
 }
 
 void kane::rendering::render(NVGcontext *nvg, glm::ivec2 framebuffer_size) {
-	if (lp::entity) camera::location = lp::entity->location;
+	if (lp::entity) camera::location = lp::entity->location + glm::vec2(0, 60);
 	camera::scale = glm::round(glm::max(1.f, framebuffer_size.x / 600.f));
 	const auto camera_viewport_size = glm::fvec2(framebuffer_size) / camera::scale;
 	camera::view_min = { camera::location.x - (camera_viewport_size.x * .5f), camera::location.y - (camera_viewport_size.y * .5f) };
