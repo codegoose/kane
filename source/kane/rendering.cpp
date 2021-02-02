@@ -178,7 +178,7 @@ namespace kane::rendering {
 		nvgTranslate(
 			nvg,
 			glm::round((framebuffer_size.x * .5f) - (camera::location.x * camera::scale * tx_scale)),
-			glm::round((framebuffer_size.y * .5f) + (camera::location.y * camera::scale * tx_scale))
+			glm::round((framebuffer_size.y * .5f) + (camera::location.y * camera::scale))
 		);
 		nvgScale(nvg, camera::scale, camera::scale);
 		nvgBeginPath(nvg);
