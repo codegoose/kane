@@ -297,7 +297,6 @@ void kane::rendering::render(NVGcontext *nvg, glm::ivec2 framebuffer_size) {
 	const auto camera_viewport_size = glm::fvec2(framebuffer_size) / camera::scale;
 	camera::view_min = { camera::location.x - (camera_viewport_size.x * .5f), camera::location.y - (camera_viewport_size.y * .5f) };
 	camera::view_max = { camera::location.x + (camera_viewport_size.x * .5f), camera::location.y + (camera_viewport_size.y * .5f) };
-	// sl::info("{}, {}; {}, {}", camera::view_min.x, camera::view_min.y, camera::view_max.x, camera::view_max.y);
 	render_bg_parallax(nvg, framebuffer_size);
 	render_shrines(nvg, framebuffer_size);
 	{
