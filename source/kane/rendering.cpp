@@ -217,8 +217,11 @@ namespace kane::rendering {
 		int img_1_w, img_1_h;
 		auto img_2 = assets::sprite_sheet_gl_handles["wide_flora_2"];
 		int img_2_w, img_2_h;
+		auto img_3 = assets::sprite_sheet_gl_handles["small_flora_1"];
+		int img_3_w, img_3_h;
 		nvgImageSize(nvg, img_1, &img_1_w, &img_1_h);
 		nvgImageSize(nvg, img_2, &img_2_w, &img_2_h);
+		nvgImageSize(nvg, img_3, &img_3_w, &img_3_h);
 		if (static bool first = true; first) {
 			for (int x = -8000; x < 8000;) {
 				if (rand() % 100 > 10) {
@@ -232,16 +235,19 @@ namespace kane::rendering {
 				}
 				if (rand() % 100 > 20) x += rand() % 400;
 			}
+			for (int i = 0; i < 22 + rand() % 100; i++) flora_instances.push_back({ 2, -8000 + rand() % 16000, img_3_w });
 			first = false;
 		}
 		for (auto &fp : flora_instances) {
-			if (fp.x + fp.w < camera::view_min.x || fp.x > camera::view_max.x) continue;
 			switch (fp.id) {
 				case 0:
 					render_bg_asset(nvg, fp.x, -img_1_h / 2, img_1_w, img_1_h, 1, img_1, framebuffer_size);
 					break;
 				case 1:
 					render_bg_asset(nvg, fp.x, -img_2_h / 2, img_2_w, img_2_h, 1, img_2, framebuffer_size);
+					break;
+				case 2:
+					render_bg_asset(nvg, fp.x, -img_3_h, img_3_w, img_3_h, 1, img_3, framebuffer_size);
 					break;
 			}
 		}
@@ -284,7 +290,7 @@ void kane::rendering::render(NVGcontext *nvg, glm::ivec2 framebuffer_size) {
 	const auto camera_viewport_size = glm::fvec2(framebuffer_size) / camera::scale;
 	camera::view_min = { camera::location.x - (camera_viewport_size.x * .5f), camera::location.y - (camera_viewport_size.y * .5f) };
 	camera::view_max = { camera::location.x + (camera_viewport_size.x * .5f), camera::location.y + (camera_viewport_size.y * .5f) };
-	sl::info("{}, {}; {}, {}", camera::view_min.x, camera::view_min.y, camera::view_max.x, camera::view_max.y);
+	// sl::info("{}, {}; {}, {}", camera::view_min.x, camera::view_min.y, camera::view_max.x, camera::view_max.y);
 	render_bg_parallax(nvg, framebuffer_size);
 	{
 		auto entities_snapshot = game::entities;
