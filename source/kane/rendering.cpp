@@ -188,8 +188,6 @@ namespace kane::rendering {
 	}
 
 	void render_bg_parallax(NVGcontext *nvg, glm::ivec2 framebuffer_size) {
-		// auto scene_view_size = glm::fvec2(framebuffer_size) / camera::scale;
-		// sl::info("{} <-> {}", camera::pos.x - (scene_view_size.x * .5f), camera::pos.x + (scene_view_size.x * .5f));
 		{
 			auto img_glid = assets::sprite_sheet_gl_handles["bg_city_2_far"];
 			int img_w, img_h;
@@ -244,6 +242,10 @@ bool kane::rendering::initialize(NVGcontext *nvg) {
 void kane::rendering::render(NVGcontext *nvg, glm::ivec2 framebuffer_size) {
 	if (lp::entity) camera::location = lp::entity->location;
 	camera::scale = glm::round(glm::max(1.f, framebuffer_size.x / 600.f));
+	const auto camera_viewport_size = glm::fvec2(framebuffer_size) / camera::scale;
+	camera::view_min = { camera::location.x - (camera_viewport_size.x * .5f), camera::location.y - (camera_viewport_size.y * .5f) };
+	camera::view_max = { camera::location.x + (camera_viewport_size.x * .5f), camera::location.y + (camera_viewport_size.y * .5f) };
+	sl::info("{}, {}; {}, {}", camera::view_min.x, camera::view_min.y, camera::view_max.x, camera::view_max.y);
 	render_bg_parallax(nvg, framebuffer_size);
 	{
 		auto entities_snapshot = game::entities;
