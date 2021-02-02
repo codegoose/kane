@@ -57,6 +57,7 @@ void kane::game::initialize() {
 		timing::subscribe(update_varying, true);
 		first = false;
 	}
+	/*
 	audio::play_music("low_fog");
 	{
 		auto guy = std::make_shared<npc::merchant>();
@@ -73,6 +74,7 @@ void kane::game::initialize() {
 		guy->location = { -100, 0 };
 		add_entity(guy);
 	}
+	*/
 }
 
 void kane::game::add_entity(std::shared_ptr<entity> new_entity) {
