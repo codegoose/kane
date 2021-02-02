@@ -208,6 +208,45 @@ namespace kane::rendering {
 		}
 	}
 
+	void render_flora(NVGcontext *nvg, glm::ivec2 framebuffer_size) {
+		struct floor_patch {
+			int id, x, w;
+		};
+		static std::vector<floor_patch> flora_instances;
+		auto img_1 = assets::sprite_sheet_gl_handles["wide_flora_1"];
+		int img_1_w, img_1_h;
+		auto img_2 = assets::sprite_sheet_gl_handles["wide_flora_2"];
+		int img_2_w, img_2_h;
+		nvgImageSize(nvg, img_1, &img_1_w, &img_1_h);
+		nvgImageSize(nvg, img_2, &img_2_w, &img_2_h);
+		if (static bool first = true; first) {
+			for (int x = -8000; x < 8000;) {
+				if (rand() % 100 > 10) {
+					if (rand() % 100 < 15) {
+						flora_instances.push_back({ 1, x, img_2_w });
+						x += img_2_w;
+					} else {
+						flora_instances.push_back({ 0, x, img_1_w });
+						x += img_1_w;
+					}
+				}
+				if (rand() % 100 > 20) x += rand() % 400;
+			}
+			first = false;
+		}
+		for (auto &fp : flora_instances) {
+			if (fp.x + fp.w < camera::view_min.x || fp.x > camera::view_max.x) continue;
+			switch (fp.id) {
+				case 0:
+					render_bg_asset(nvg, fp.x, -img_1_h / 2, img_1_w, img_1_h, 1, img_1, framebuffer_size);
+					break;
+				case 1:
+					render_bg_asset(nvg, fp.x, -img_2_h / 2, img_2_w, img_2_h, 1, img_2, framebuffer_size);
+					break;
+			}
+		}
+	}
+
 	void render_ui(NVGcontext *nvg, glm::ivec2 framebuffer_size) {
 		nvgResetTransform(nvg);
 		nvgFontFace(nvg, "comfortaa_bold");
@@ -260,6 +299,7 @@ void kane::rendering::render(NVGcontext *nvg, glm::ivec2 framebuffer_size) {
 			render_entity(nvg, ent);
 		}
 	}
+	render_flora(nvg, framebuffer_size);
 	if (enable_debug_drawing) {
 		for (auto &dbg : debug_boxes) {
 			nvgResetTransform(nvg);
