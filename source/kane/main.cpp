@@ -93,7 +93,7 @@ int main() {
 			glewExperimental = GL_TRUE;
 			glfwMakeContextCurrent(window);
 			if (glewInit() == GLEW_OK) {
-				sl::debug("OpenGL {} via {}.", glGetString(GL_VERSION), glGetString(GL_RENDERER));
+				sl::debug("OpenGL {} via {}.", reinterpret_cast<const char *>(glGetString(GL_VERSION)), reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
 				if (auto nvg = nvgCreateGL3(NVG_ANTIALIAS | NVG_STENCIL_STROKES); nvg) {
 					center_window_on_primary(window);
 					kane::run(window, nvg);
