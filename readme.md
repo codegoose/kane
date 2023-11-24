@@ -1,7 +1,7 @@
 ## kane
 
 <p align="center">
- <img width="605" height="216" src="https://github.com/codegoose/kane/blob/master/snapshots/0.png?raw=true">
+ <img src="https://github.com/codegoose/kane/blob/master/snapshots/0.png?raw=true">
 </p>
 
 ### Asset compilation
